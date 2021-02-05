@@ -7,5 +7,5 @@
 /tmp
 node_modules
 node_modules/
-.jest/
+.jest/*
 

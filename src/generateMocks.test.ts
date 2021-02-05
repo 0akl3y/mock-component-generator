@@ -1,9 +1,21 @@
-import {parseExample} from './generateMocks'
+import { generateMock } from './generateMocks'
 
+const code = `
+import Stuff from '@/some-stuff'
+import Blah from '@/some-blah'
+import { Blub } from '@/some-blub'
 
-describe('parseExample', () => {
-  it('parses the example', () => {
-    console.log(parseExample())
-    expect(parseExample()).toBeTruthy()
+export const SomeComponent = (props) => {
+  return <View />
+}
+
+export function someFunction() {
+  return () => 'foo'
+}
+`;
+
+describe('runExample', () => {
+  it('parses the example correctly', () => {    
+    expect(generateMock(code)).toBeTruthy()
   })
 })

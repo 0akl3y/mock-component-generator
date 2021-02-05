@@ -1,7 +1,7 @@
 import {Command, flags} from '@oclif/command'
 
 class MockGenerator extends Command {
-  static description = 'describe the command here'
+  static description = 'Generate mocks from all tsx files in the folder'
 
   static flags = {
     // add --version flag to show CLI version
