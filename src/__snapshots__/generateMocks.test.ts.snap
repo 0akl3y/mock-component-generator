@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`generateMocks functional components mocks functional components of different sort 1`] = `
+"import React from 'react'
+export const same = 'the same procedure as every year';
+export const shortComponent = props => React.createElement(shortComponent, props);
+export const parans = props => (React.createElement(parans, props));
+export const braced = props => {
+  return React.createElement(braced, props);
+};
+export const someFunction = props => 'Remains the same';"
+`;
+
+exports[`generateMocks functional components removes non exported components 1`] = `
+"import React from 'react'
+export const externalComponent = props => React.createElement(externalComponent, props);"
+`;

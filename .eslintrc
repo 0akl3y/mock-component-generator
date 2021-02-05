@@ -1,4 +1,4 @@
-{  
+{
   "root": true,
   "parser": "@typescript-eslint/parser",
   "extends": [
@@ -7,16 +7,17 @@
     "plugin:import/warnings",
     "plugin:import/typescript"
   ],
-  "plugins": [
-    "import"
-  ],  
+  "plugins": ["import"],
   "rules": {
     "import/first": "error",
     "import/newline-after-import": "error",
-    "import/order": ["error", {
-      "alphabetize": { "order": "asc" },
-      "newlines-between": "always"
-    }],
+    "import/order": [
+      "error",
+      {
+        "alphabetize": { "order": "asc" },
+        "newlines-between": "always"
+      }
+    ],
     "no-lonely-if": "error",
     "no-param-reassign": "error",
     "object-shorthand": "error",
@@ -26,8 +27,8 @@
     "no-unused-vars": "off",
     // TODO: remove options if function signature problem is solved
     "@typescript-eslint/explicit-function-return-type": "off",
-    "@typescript-eslint/no-unused-vars": ["error", { "args": "none" }],
-  },  
+    "@typescript-eslint/no-unused-vars": ["error", { "args": "none" }]
+  },
   "env": {
     "jest": true
   }
