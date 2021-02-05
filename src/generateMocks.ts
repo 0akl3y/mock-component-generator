@@ -19,9 +19,9 @@ export const generateMock = (code: string) => {
     // Transform all non hof to jest.fn()
     BlockStatement(path) {
       const parentNode = path.getFunctionParent()?.node;
-      const functionName = path.findParent((path) =>
+      const functionName = (path.findParent((path) =>
         path.isVariableDeclarator()
-      )?.node?.id.name;
+      )?.node as any)?.id.name;
 
       if (t.isType(parentNode?.type, "ArrowFunctionExpression")) {
         path.replaceWith(
@@ -29,7 +29,7 @@ export const generateMock = (code: string) => {
             t.returnStatement(
               t.callExpression(t.identifier("React.createElement"), [
                 t.stringLiteral(functionName),
-                ...parentNode?.params,
+                ...(parentNode?.params as any[]),
               ])
             ),
           ])
