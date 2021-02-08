@@ -1,9 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { pathToFileURL } from "url";
-
 import generate from "@babel/generator";
 import * as parser from "@babel/parser";
-import template from "@babel/template";
 import traverse from "@babel/traverse";
 import * as t from "@babel/types";
 
