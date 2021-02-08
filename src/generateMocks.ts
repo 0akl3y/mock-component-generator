@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { pathToFileURL } from "url";
+
 import generate from "@babel/generator";
 import * as parser from "@babel/parser";
 import template from "@babel/template";
@@ -29,12 +32,13 @@ export const generateMock = (code: string) => {
   const hasExportDeclaration = (path: any) =>
     Boolean(path.findParent((path: any) => path.isExportDeclaration()));
 
-  const arrowFunctionVisitior = {
+  const functionVisitor = {
+    //handle functional components
     JSXElement(path: any) {
       const params = path.getFunctionParent()?.node?.params;
-
-      const functionName = (path.findParent((path: any) =>
-        path.isVariableDeclarator()
+      const functionName = (path.findParent(
+        (path: any) =>
+          path.isVariableDeclarator() || path.isFunctionDeclaration()
       )?.node as any)?.id.name;
 
       const mockedElement = t.callExpression(
@@ -47,47 +51,34 @@ export const generateMock = (code: string) => {
       } else {
         path.replaceWith(mockedElement);
       }
-
       path.skip();
     },
-    BlockStatement(path: any) {
+    //handle all other types of functions
+    Expression(path: any) {
       const params = path.getFunctionParent()?.node?.params;
-      const functionName = (path.findParent(
-        (path: { isVariableDeclarator: () => any }) =>
-          path.isVariableDeclarator()
-      )?.node as any)?.id.name;
-      path.replaceWith(mockFunctionBlockHelper(functionName, params));
+      const jestMock = t.callExpression(t.identifier("jest.fn"), [...params]);
+      path.replaceWith(jestMock);
       path.skip();
     },
   };
 
   traverse(ast, {
-    // Remove all imports
+    // remove all imports
     ImportDeclaration(path) {
       path.remove();
     },
 
-    // Transform arrow function components
-    ArrowFunctionExpression(path) {
+    // transform arrow function components
+    Function(path) {
       const declaratorPath = path.findParent((path: any) =>
         path.isVariableDeclaration()
       );
-      const isExportDeclaration = Boolean(
-        path.findParent((path: any) => path.isExportDeclaration())
-      );
-      if (!isExportDeclaration) {
+      if (!hasExportDeclaration(path)) {
         declaratorPath?.remove();
       } else {
-        path.traverse(arrowFunctionVisitior);
+        path.traverse(functionVisitor);
       }
     },
-
-    // BlockStatement(path) {
-    //   console.log(path.getFunctionParent()?.node.type)
-    //   // eslint-disable-next-line no-console
-
-    //   // path?.node?.id?.name && (path.node.id.name = `${path.node.id.name}x`)
-    // },
   });
 
   const output = generate(

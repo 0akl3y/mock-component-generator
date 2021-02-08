@@ -15,7 +15,7 @@ export function someFunction() {
 `;
 
 describe("generateMocks", () => {
-  it.skip("replaces the import statement with only react", () => {
+  it("replaces the import statement with only react", () => {
     const input = `
     import Stuff from '@/some-stuff'
     import Blah from '@/some-blah'
@@ -28,13 +28,13 @@ describe("generateMocks", () => {
     );
   });
 
-  describe("functional components", () => {
+  describe("components", () => {
     it("mocks functional components of different sort", () => {
       const input = `
       export const same = 'the same procedure as every year'
       export const shortComponent = props => <SomeView />
-      export const parans = (props) => (<SomeViewInParans />)
-      export const braced = (props) => {return (<SomeBracedView />)}
+      export const parans = (props: {id: string}) => (<SomeViewInParans />)
+      export const braced = (props: {id: string}) => {return (<SomeBracedView />)}
       export const someFunction = props => 'Remains the same'      
       `;
       expect(generateMock(input).code).toMatchSnapshot();
@@ -46,18 +46,15 @@ describe("generateMocks", () => {
       const _privateFN = () => 'should not show'
       export const externalComponent = props => <SomeExternalComponent />            
       `;
-
       expect(generateMock(input).code).toMatchSnapshot();
     });
 
-    it.skip("mocks functional components", () => {
+    it("mocks functional components", () => {
       const input = `
       import React from 'react'
       import {Row} from 'superuiguide'
-  
       const someStuff
-  
-      
+        
       const curly = (input) => ('braces')
       const someOtherFunction = (input) => {return input + 1}
       
@@ -65,8 +62,39 @@ describe("generateMocks", () => {
         return <Row />
       }
       `;
-      console.log(generateMock(input));
-      expect(generateMock(input)).toBeTruthy();
+      expect(generateMock(input)).toMatchSnapshot();
+    });
+
+    it("mocks non component functions with jest.fn", () => {
+      const input = `
+      export const function1 = (args: string[]) => { return 'function 1'}
+      export const function2 = args => 'function 2'
+      export const function3 = (args:string) => ('function 3')
+      `;
+      expect(generateMock(input)).toMatchSnapshot();
+    });
+
+    it("mocks non component functions with jest.fn", () => {
+      const input = `
+      export const function1 = (args: string[]) => { return 'function 1'}
+      export const function2 = args => 'function 2'
+      export const function3 = (args:string) => ('function 3')
+      `;
+      expect(generateMock(input)).toMatchSnapshot();
+    });
+
+    it("mocks functions", () => {
+      const input = `
+      export function fn1(args) {
+         return 'fn1'
+      }
+
+      export function FnComponent(props: {foo: string}) {
+        return <Row />
+      }
+      
+      `;
+      expect(generateMock(input)).toMatchSnapshot();
     });
   });
 });
