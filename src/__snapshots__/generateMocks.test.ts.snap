@@ -1,15 +1,11 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`generateMocks components mocks functional components 1`] = `
-Object {
-  "code": "import React from 'react'
+"import React from 'react'
 const someStuff;
 export const SomeComponent = props => {
   return React.createElement(SomeComponent, props);
-};",
-  "map": null,
-  "rawMappings": undefined,
-}
+};"
 `;
 
 exports[`generateMocks components mocks functional components of different sort 1`] = `
@@ -28,8 +24,7 @@ export const someFunction = props => jest.fn(props);"
 `;
 
 exports[`generateMocks components mocks functions 1`] = `
-Object {
-  "code": "import React from 'react'
+"import React from 'react'
 export function fn1(args) {
   return jest.fn(args);
 }
@@ -37,36 +32,30 @@ export function FnComponent(props: {
   foo: string;
 }) {
   return React.createElement(FnComponent, props);
-}",
-  "map": null,
-  "rawMappings": undefined,
-}
+}"
 `;
 
 exports[`generateMocks components mocks non component functions with jest.fn 1`] = `
-Object {
-  "code": "import React from 'react'
+"import React from 'react'
 export const function1 = (args: string[]) => {
   return jest.fn(args);
 };
 export const function2 = args => jest.fn(args);
-export const function3 = (args: string) => jest.fn(args);",
-  "map": null,
-  "rawMappings": undefined,
-}
+export const function3 = (args: string) => jest.fn(args);"
 `;
 
 exports[`generateMocks components mocks non component functions with jest.fn 2`] = `
-Object {
-  "code": "import React from 'react'
+"import React from 'react'
 export const function1 = (args: string[]) => {
   return jest.fn(args);
 };
 export const function2 = args => jest.fn(args);
-export const function3 = (args: string) => jest.fn(args);",
-  "map": null,
-  "rawMappings": undefined,
-}
+export const function3 = (args: string) => jest.fn(args);"
+`;
+
+exports[`generateMocks components removes comments 1`] = `
+"import React from 'react'
+export const function2 = args => jest.fn(args);"
 `;
 
 exports[`generateMocks components removes non exported components 1`] = `

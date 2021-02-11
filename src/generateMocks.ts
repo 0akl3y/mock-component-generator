@@ -61,6 +61,7 @@ export const generateMock = (code: string) => {
 
   traverse(ast, {
     // remove all imports
+
     ImportDeclaration(path) {
       path.remove();
     },
@@ -81,7 +82,7 @@ export const generateMock = (code: string) => {
   const output = generate(
     ast,
     {
-      /* options */
+      comments: false,
     },
     code
   );
