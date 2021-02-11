@@ -2,10 +2,12 @@
 
 exports[`fileOperations walks generates mock files for all existing files in the dir 1`] = `
 "import React from 'react'
-"
+export function SomeClassComponent(props) {
+  return React.createElement(\\"SomeClassComponent\\", props);
+}"
 `;
 
 exports[`fileOperations walks generates mock files for all existing files in the dir 2`] = `
 "import React from 'react'
-export const SomeComponent = () => (React.createElement(SomeComponent));"
+export const SomeComponent = () => (React.createElement(\\"SomeComponent\\"));"
 `;

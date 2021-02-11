@@ -23,7 +23,7 @@ export const generateMock = (code: string) => {
       t.blockStatement([
         t.returnStatement(
           t.callExpression(t.identifier("React.createElement"), [
-            t.identifier(functionName),
+            t.stringLiteral(functionName),
             ...params,
           ])
         ),
@@ -48,7 +48,7 @@ export const generateMock = (code: string) => {
 
       const mockedElement = t.callExpression(
         t.identifier("React.createElement"),
-        [t.identifier(functionName), ...params]
+        [t.stringLiteral(functionName), ...params]
       );
 
       if (path.node?.extra?.parenthesized) {
@@ -75,16 +75,11 @@ export const generateMock = (code: string) => {
         path.isClassDeclaration()
       );
       const className = (classDeclaration?.node as any)?.id.name;
-      const mockedFunction = mockFunctionBlockHelper(className, []);
+      const mockedFunction = mockFunctionBlockHelper(className, [
+        t.identifier("props"),
+      ]);
       classParent.replaceWith(mockedFunction);
 
-      path.skip();
-    },
-    //handle all other types of functions
-    Expression(path: any) {
-      const params = path.getFunctionParent()?.node?.params;
-      const jestMock = t.callExpression(t.identifier("jest.fn"), [...params]);
-      path.replaceWith(jestMock);
       path.skip();
     },
   };
@@ -108,6 +103,7 @@ export const generateMock = (code: string) => {
       }
       path.skip();
     },
+
     Class(path) {
       const declaratorPath = path.findParent((path: any) =>
         path.isVariableDeclaration()
