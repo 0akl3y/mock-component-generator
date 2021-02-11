@@ -1,5 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`generateMocks components mocks class component 1`] = `
+"import React from 'react'
+"
+`;
+
 exports[`generateMocks components mocks functional components 1`] = `
 "import React from 'react'
 const someStuff;
