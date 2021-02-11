@@ -19,6 +19,7 @@
       }
     ],
     "no-lonely-if": "error",
+    "no-undef": "warn",
     "no-param-reassign": "error",
     "object-shorthand": "error",
     "@typescript-eslint/ban-ts-comment": "warn",

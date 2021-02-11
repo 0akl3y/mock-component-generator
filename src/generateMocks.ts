@@ -10,21 +10,21 @@ export const generateMock = (code: string) => {
     plugins: ["typescript", "jsx"],
   });
 
-  const importDeclarationHelper = (identifier: string, source: string) =>
-    t.importDeclaration(
-      [t.importDefaultSpecifier(t.identifier("React"))],
-      t.stringLiteral("react")
-    );
+  // const importDeclarationHelper = (identifier: string, source: string) =>
+  //   t.importDeclaration(
+  //     [t.importDefaultSpecifier(t.identifier("React"))],
+  //     t.stringLiteral("react")
+  //   );
 
-  const mockFunctionBlockHelper = (functionName: string, params: any[]) =>
-    t.blockStatement([
-      t.returnStatement(
-        t.callExpression(t.identifier("React.createElement"), [
-          t.identifier(functionName),
-          ...params,
-        ])
-      ),
-    ]);
+  // const mockFunctionBlockHelper = (functionName: string, params: any[]) =>
+  //   t.blockStatement([
+  //     t.returnStatement(
+  //       t.callExpression(t.identifier("React.createElement"), [
+  //         t.identifier(functionName),
+  //         ...params,
+  //       ])
+  //     ),
+  //   ]);
 
   const hasExportDeclaration = (path: any) =>
     Boolean(path.findParent((path: any) => path.isExportDeclaration()));
@@ -87,5 +87,5 @@ export const generateMock = (code: string) => {
   );
 
   output.code = `import React from 'react'\n${output.code}`;
-  return output;
+  return output.code;
 };

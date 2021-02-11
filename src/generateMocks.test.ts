@@ -23,7 +23,7 @@ describe("generateMocks", () => {
 
     const someOtherCode;
     `;
-    expect(generateMock(input).code).toEqual(
+    expect(generateMock(input)).toEqual(
       "import React from 'react'\nconst someOtherCode;"
     );
   });
@@ -37,7 +37,7 @@ describe("generateMocks", () => {
       export const braced = (props: {id: string}) => {return (<SomeBracedView />)}
       export const someFunction = props => 'Remains the same'      
       `;
-      expect(generateMock(input).code).toMatchSnapshot();
+      expect(generateMock(input)).toMatchSnapshot();
     });
 
     it("removes non exported components", () => {
@@ -46,7 +46,7 @@ describe("generateMocks", () => {
       const _privateFN = () => 'should not show'
       export const externalComponent = props => <SomeExternalComponent />            
       `;
-      expect(generateMock(input).code).toMatchSnapshot();
+      expect(generateMock(input)).toMatchSnapshot();
     });
 
     it("mocks functional components", () => {
