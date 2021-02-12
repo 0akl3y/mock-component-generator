@@ -41,9 +41,7 @@ export const generateMock = (code: string) => {
       const params = path.getFunctionParent()?.node?.params;
       const functionName = (path.findParent(
         (path: any) =>
-          path.isVariableDeclarator() ||
-          path.isFunctionDeclaration() ||
-          path.isClassDeclaration()
+          path.isVariableDeclarator() || path.isFunctionDeclaration()
       )?.node as any)?.id.name;
 
       const mockedElement = t.callExpression(
@@ -86,12 +84,11 @@ export const generateMock = (code: string) => {
 
   traverse(ast, {
     // remove all imports
-
     ImportDeclaration(path) {
       path.remove();
     },
 
-    // transform arrow function components
+    //transform functions to mock
     Function(path) {
       const declaratorPath = path.findParent((path: any) =>
         path.isVariableDeclaration()
@@ -104,6 +101,7 @@ export const generateMock = (code: string) => {
       path.skip();
     },
 
+    //transform classes to mock
     Class(path) {
       const declaratorPath = path.findParent((path: any) =>
         path.isVariableDeclaration()
