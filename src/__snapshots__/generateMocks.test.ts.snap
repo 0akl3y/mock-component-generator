@@ -21,11 +21,11 @@ export const same = 'the same procedure as every year';
 export const shortComponent = props => React.createElement(\\"shortComponent\\", props);
 export const parans = (props: {
   id: string;
-}) => (React.createElement(\\"parans\\", props));
+}) => React.createElement(\\"parans\\", props);
 export const braced = (props: {
   id: string;
 }) => {
-  return (React.createElement(\\"braced\\", props));
+  return React.createElement(\\"braced\\", props);
 };
 export const someFunction = props => jest.fn(props);"
 `;
@@ -59,4 +59,11 @@ export const function2 = args => jest.fn(args);"
 exports[`generateMocks components removes non exported components 1`] = `
 "import React from 'react'
 export const externalComponent = props => React.createElement(\\"externalComponent\\", props);"
+`;
+
+exports[`generateMocks components removes typescript 1`] = `
+"import React from 'react'
+export const parans = (props: {
+  id: string;
+}) => React.createElement(\\"parans\\", props);"
 `;

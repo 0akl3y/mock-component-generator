@@ -1,11 +1,26 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { transform } from "@babel/core";
 import generate from "@babel/generator";
 import * as parser from "@babel/parser";
 import traverse from "@babel/traverse";
 import * as t from "@babel/types";
 
 export const generateMock = (code: string) => {
-  const ast = parser.parse(code, {
+  //strip typescript
+
+  const transformedCode = transform(code, {
+    babelrc: true,
+    parserOpts: {
+      sourceType: "module",
+      plugins: ["typescript", "jsx"],
+    },
+  })?.code;
+
+  if (!transformedCode) {
+    return;
+  }
+
+  const ast = parser.parse(transformedCode, {
     sourceType: "module",
     plugins: ["typescript", "jsx"],
   });

@@ -9,5 +9,5 @@ export function SomeClassComponent(props) {
 
 exports[`fileOperations walks generates mock files for all existing files in the dir 2`] = `
 "import React from 'react'
-export const SomeComponent = () => (React.createElement(\\"SomeComponent\\"));"
+export const SomeComponent = () => React.createElement(\\"SomeComponent\\");"
 `;

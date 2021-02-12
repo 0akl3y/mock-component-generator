@@ -17,6 +17,8 @@ describe("generateMocks", () => {
   describe("components", () => {
     it("mocks functional components of different sort", () => {
       const input = `
+      import {SomeView, SomeViewInParans, SomeBracedView} from 'fantasien'
+      
       export const same = 'the same procedure as every year'
       export const shortComponent = props => <SomeView />
       export const parans = (props: {id: string}) => (<SomeViewInParans />)
@@ -28,6 +30,7 @@ describe("generateMocks", () => {
 
     it("removes non exported components", () => {
       const input = `
+      import {SomeInternalComponent, SomeExternalComponent} from 'fantasien'
       const _internalComponent = props => <SomeInternalComponent />      
       const _privateFN = () => 'should not show'
       export const externalComponent = props => <SomeExternalComponent />            
@@ -94,6 +97,14 @@ describe("generateMocks", () => {
           return <h1>Hello, {this.props.name}</h1>;
         }
       }
+      `;
+      expect(generateMock(input)).toMatchSnapshot();
+    });
+
+    it("removes typescript", () => {
+      const input = `
+      import React from "react";
+      export const parans = (props: {id: string}) => (<SomeViewInParans />)
       `;
       expect(generateMock(input)).toMatchSnapshot();
     });
