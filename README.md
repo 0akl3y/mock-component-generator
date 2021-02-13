@@ -1,7 +1,8 @@
 ReactMockGenerator
 =============
 
-Generate a mock folder with mocks for all ts and tsx files within the folder
+Generate a __mock__ folder with mocks for all tsx files within the folder.
+Per default Existing __mocks__ will not be overwritten.
 
 [![oclif](https://img.shields.io/badge/cli-oclif-brightgreen.svg)](https://oclif.io)
 [![Version](https://img.shields.io/npm/v/mockGenerator.svg)](https://npmjs.org/package/mockGenerator)
@@ -16,13 +17,8 @@ Generate a mock folder with mocks for all ts and tsx files within the folder
 <!-- usage -->
 ```sh-session
 $ npm install -g mockGenerator
-$ mockGenerator COMMAND
-running command...
-$ mockGenerator (-v|--version|version)
-mockGenerator/0.1.0 darwin-x64 node-v12.14.1
-$ mockGenerator --help [COMMAND]
-USAGE
-  $ mockGenerator COMMAND
+$ cd my-folder-containing-tsx
+$ mockGenerator
 ...
 ```
 <!-- usagestop -->
