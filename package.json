@@ -6,7 +6,7 @@
   "bin": {
     "mockGenerator": "./bin/run"
   },
-  "bugs": "https://github.com/https://github.com/0akl3y/Mock Generator/issues",
+  "bugs": "https://github.com/0akl3y/mock-component-generator",
   "dependencies": {
     "@babel/plugin-syntax-jsx": "^7.12.13",
     "@babel/plugin-syntax-typescript": "^7.12.13",
