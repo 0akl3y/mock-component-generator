@@ -3,6 +3,7 @@ mock-component-generator
 
 Generate a `__mock__` folder with mocks for all tsx files within the folder.
 Per default Existing `__mocks__` will not be overwritten.
+Currently all components (class and functional) will be mocked as function.
 
 [![oclif](https://img.shields.io/badge/cli-oclif-brightgreen.svg)](https://oclif.io)
 [![Version](https://img.shields.io/npm/v/mockGenerator.svg)](https://npmjs.org/package/mockGenerator)
@@ -11,7 +12,8 @@ Per default Existing `__mocks__` will not be overwritten.
 
 <!-- toc -->
 * [Usage](#usage)
-* [Commands](#commands)
+* [Options](#options)
+* [Example](#example)
 <!-- tocstop -->
 
 # Usage
@@ -25,6 +27,7 @@ $ generateMockComponents
 <!-- usagestop -->
 
 # Options
+<!-- options -->
 
 `--keepImports (-i)`: Keep the imports. Default is false
 
@@ -33,14 +36,15 @@ $ generateMockComponents
 <!-- optionsstop -->
 
 # Example. 
-
-Running generateMock in 
-
+<!-- example -->
+Running generateMockComponents in 
+```
 |- ComponentA.tsx
 |- ComponentB.jsx
 |- OtherStuff.ts
-
+```
 will result in
+```
 |- __mocks__
   |- ComponentA.tsx
   |- ComponentB.jsx
@@ -48,7 +52,9 @@ will result in
 |- ComponentA.tsx
 |- ComponentB.jsx
 |- OtherStuff.ts
+```
 
+where
 
 ```typescript 
 import React from 'react'
@@ -67,8 +73,7 @@ import React from 'react'
 export const HelloComponent = (props) => React.createElement('HelloComponent', props)
 ```
 
-Currently all components (class and functional) will be mocked as function.
-
+<!-- examplestop -->
 
 
 
