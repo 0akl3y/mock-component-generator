@@ -66,7 +66,7 @@ export const HelloComponent = (props: { name: string }) => (
   </div>
 )
 ```
-will be mocked like:
+will be mocked like
 
 ```typescript 
 import React from 'react'
