@@ -29,7 +29,8 @@
     "semi": ["error", "never"],
     // TODO: remove options if function signature problem is solved
     "@typescript-eslint/explicit-function-return-type": "off",
-    "@typescript-eslint/no-unused-vars": ["error", { "args": "none" }]
+    "@typescript-eslint/no-unused-vars": ["error", { "args": "none" }],
+    "@typescript-eslint/member-delimiter-style": "never"
   },
   "env": {
     "jest": true

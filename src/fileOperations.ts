@@ -1,4 +1,4 @@
-import { generateMock } from './generateMocks'
+import { generateMock, MockGeneratorOptions } from './generateMocks'
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const fs = require('fs')
@@ -26,7 +26,10 @@ const mockFileExists = (dir: string, filenanme: string) => {
   }
 }
 
-export async function generateMocksInDir(dir: string) {
+export async function generateMocksInDir(
+  dir: string,
+  options: MockGeneratorOptions
+) {
   const files = fs.readdirSync(dir)
   const tsxFiles = files.filter((file: string) => file.match(/\.[jt]sx/))
 
@@ -38,7 +41,7 @@ export async function generateMocksInDir(dir: string) {
     const content = fs.readFileSync(`${dir}/${tsxFile}`, {
       encoding: 'utf-8',
     })
-    const mockContent = generateMock(content)
+    const mockContent = generateMock(content, options)
 
     //It should not overwrite existing mocks
     if (!mockFileExists(dir, tsxFile)) {
