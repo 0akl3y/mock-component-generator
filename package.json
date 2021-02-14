@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "author": "Johannes Eichler",
   "bin": {
-    "mockGenerator": "./bin/run"
+    "generateMockComponents": "./bin/run"
   },
   "bugs": "https://github.com/0akl3y/mock-component-generator",
   "dependencies": {
