@@ -13,16 +13,21 @@ Currently all components (class and functional) will be mocked as function.
 <!-- toc -->
 * [Usage](#usage)
 * [Options](#options)
-* [Example](#example)
+* [Example.](#example)
 <!-- tocstop -->
 
 # Usage
 <!-- usage -->
 ```sh-session
-$ npm install -g mockGenerator
-$ cd my-folder
-$ generateMockComponents
-...generate mocks for all umocked jsx and tsx files in the current folder
+$ npm install -g mock-component-generator
+$ mockGenerator COMMAND
+running command...
+$ mockGenerator (-v|--version|version)
+mock-component-generator/0.1.0 darwin-x64 node-v14.15.5
+$ mockGenerator --help [COMMAND]
+USAGE
+  $ mockGenerator COMMAND
+...
 ```
 <!-- usagestop -->
 
@@ -74,8 +79,3 @@ export const HelloComponent = (props) => React.createElement('HelloComponent', p
 ```
 
 <!-- examplestop -->
-
-
-
-
-

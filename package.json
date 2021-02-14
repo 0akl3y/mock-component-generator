@@ -1,7 +1,7 @@
 {
   "name": "mock-component-generator",
   "description": "Generate a mock folder with mocks for all ts and tsx files within the folder",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": "Johannes Eichler",
   "bin": {
     "generateMockComponents": "./bin/run"
@@ -41,16 +41,19 @@
     "/bin",
     "/lib"
   ],
-  "homepage": "https://github.com/https://github.com/0akl3y/Mock Generator",
+  "homepage": "https://github.com/0akl3y/mock-component-generator",
   "keywords": [
-    "oclif"
+    "oclif",
+    "tests",
+    "jest",
+    "mocking"
   ],
   "license": "MIT",
   "main": "lib/index.js",
   "oclif": {
     "bin": "mockGenerator"
   },
-  "repository": "https://github.com/0akl3y/Mock Generator",
+  "repository": "https://github.com/0akl3y/mock-component-generator",
   "scripts": {
     "posttest": "eslint . --ext .ts --config .eslintrc",
     "prepack": "rm -rf lib && tsc -b && oclif-dev readme",
