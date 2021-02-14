@@ -2,7 +2,7 @@ mock-component-generator
 =============
 
 Generate a `__mock__` folder with mocks for all tsx files within the folder.
-Per default Existing `__mocks__` will not be overwritten.
+Per default existing `__mocks__` will not be overwritten.
 Currently all components (class and functional) will be mocked as function.
 
 [![oclif](https://img.shields.io/badge/cli-oclif-brightgreen.svg)](https://oclif.io)
