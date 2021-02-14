@@ -1,4 +1,4 @@
-ReactMockGenerator
+mock-component-generator
 =============
 
 Generate a __mock__ folder with mocks for all tsx files within the folder.
