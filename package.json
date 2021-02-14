@@ -1,5 +1,5 @@
 {
-  "name": "mockGenerator",
+  "name": "mock-component-generator",
   "description": "Generate a mock folder with mocks for all ts and tsx files within the folder",
   "version": "0.1.0",
   "author": "Johannes Eichler",
