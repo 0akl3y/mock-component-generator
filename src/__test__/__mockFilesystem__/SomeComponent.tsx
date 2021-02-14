@@ -1,7 +1,7 @@
 import React from "react";
 
-export const SomeComponent = () => (
+export const HelloComponent = (props: { name: string }) => (
   <div>
-    <p>'hello again</p>
+    <p>`${name}`</p>
   </div>
 );

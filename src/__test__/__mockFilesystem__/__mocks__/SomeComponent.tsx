@@ -1,2 +1,2 @@
 import React from 'react'
-export const SomeComponent = () => React.createElement("SomeComponent");
+export const HelloComponent = props => React.createElement("HelloComponent", props);

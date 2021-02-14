@@ -9,7 +9,7 @@ export const generateMock = (code: string) => {
   //strip typescript
 
   const transformedCode = transform(code, {
-    babelrc: true,
+    plugins: [["@babel/plugin-transform-typescript", { isTSX: true }]],
     parserOpts: {
       sourceType: "module",
       plugins: ["typescript", "jsx"],
@@ -32,20 +32,23 @@ export const generateMock = (code: string) => {
   //   );
 
   const mockFunctionBlockHelper = (functionName: string, params: any[]) =>
-    t.functionDeclaration(
-      t.identifier(functionName),
-      params,
-      t.blockStatement([
-        t.returnStatement(
-          t.callExpression(t.identifier("React.createElement"), [
-            t.stringLiteral(functionName),
-            ...params,
-          ])
-        ),
-      ]),
-      false,
-      false
-    );
+    t.variableDeclaration("const", [
+      t.variableDeclarator(
+        t.identifier(functionName),
+        t.arrowFunctionExpression(
+          params,
+          t.blockStatement([
+            t.returnStatement(
+              t.callExpression(t.identifier("React.createElement"), [
+                t.stringLiteral(functionName),
+                ...params,
+              ])
+            ),
+          ]),
+          false
+        )
+      ),
+    ]);
 
   const hasExportDeclaration = (path: any) =>
     Boolean(path.findParent((path: any) => path.isExportDeclaration()));

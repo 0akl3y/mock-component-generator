@@ -26,6 +26,7 @@
 
     // https://github.com/typescript-eslint/typescript-eslint/blob/master/docs/getting-started/linting/FAQ.md#i-am-using-a-rule-from-eslint-core-and-it-doesnt-work-correctly-with-typescript-code
     "no-unused-vars": "off",
+    "semi": ["error", "never"],
     // TODO: remove options if function signature problem is solved
     "@typescript-eslint/explicit-function-return-type": "off",
     "@typescript-eslint/no-unused-vars": ["error", { "args": "none" }]

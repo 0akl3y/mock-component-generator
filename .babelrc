@@ -1,4 +1,4 @@
 {
   "comments": false,
-  "plugins": [["@babel/plugin-transform-typescript", { "isTSX": true }]]
+  "plugins": [["@babel/plugin-transform-typescript", { "isTSX": false }]]
 }

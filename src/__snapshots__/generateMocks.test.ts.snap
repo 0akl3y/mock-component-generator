@@ -2,9 +2,9 @@
 
 exports[`generateMocks components mocks class component 1`] = `
 "import React from 'react'
-export function SomeClassComponent(props) {
+export const SomeClassComponent = props => {
   return React.createElement(\\"SomeClassComponent\\", props);
-}"
+};"
 `;
 
 exports[`generateMocks components mocks functional components 1`] = `
@@ -19,12 +19,8 @@ exports[`generateMocks components mocks functional components of different sort 
 "import React from 'react'
 export const same = 'the same procedure as every year';
 export const shortComponent = props => React.createElement(\\"shortComponent\\", props);
-export const parans = (props: {
-  id: string;
-}) => React.createElement(\\"parans\\", props);
-export const braced = (props: {
-  id: string;
-}) => {
+export const parans = props => React.createElement(\\"parans\\", props);
+export const braced = props => {
   return React.createElement(\\"braced\\", props);
 };
 export const someFunction = props => jest.fn(props);"
@@ -35,20 +31,18 @@ exports[`generateMocks components mocks functions 1`] = `
 export function fn1(args) {
   return jest.fn(args);
 }
-export function FnComponent(props: {
-  foo: string;
-}) {
+export function FnComponent(props) {
   return React.createElement(\\"FnComponent\\", props);
 }"
 `;
 
 exports[`generateMocks components mocks non component functions with jest.fn 1`] = `
 "import React from 'react'
-export const function1 = (args: string[]) => {
+export const function1 = args => {
   return jest.fn(args);
 };
 export const function2 = args => jest.fn(args);
-export const function3 = (args: string) => jest.fn(args);"
+export const function3 = args => jest.fn(args);"
 `;
 
 exports[`generateMocks components removes comments 1`] = `
@@ -63,7 +57,5 @@ export const externalComponent = props => React.createElement(\\"externalCompone
 
 exports[`generateMocks components removes typescript 1`] = `
 "import React from 'react'
-export const parans = (props: {
-  id: string;
-}) => React.createElement(\\"parans\\", props);"
+export const parans = props => React.createElement(\\"parans\\", props);"
 `;
