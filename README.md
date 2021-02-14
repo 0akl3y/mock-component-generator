@@ -20,14 +20,9 @@ Currently all components (class and functional) will be mocked as function.
 <!-- usage -->
 ```sh-session
 $ npm install -g mock-component-generator
-$ mockGenerator COMMAND
-running command...
-$ mockGenerator (-v|--version|version)
-mock-component-generator/0.1.0 darwin-x64 node-v14.15.5
-$ mockGenerator --help [COMMAND]
-USAGE
-  $ mockGenerator COMMAND
-...
+$ cd my-folder
+$ generateMockComponents
+...generating mocks in my-folder
 ```
 <!-- usagestop -->
 
