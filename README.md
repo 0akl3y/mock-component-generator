@@ -31,7 +31,7 @@ $ generateMockComponents
 
 `--keepImports (-i)`: Keep the imports. Default is false
 
-`--keepTSType (-t)`: Keep the TS-Types. Default is false 
+`--keepTSTypes (-t)`: Keep the TS-Types. Default is false 
 
 <!-- optionsstop -->
 

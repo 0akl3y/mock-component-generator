@@ -1,7 +1,7 @@
 {
   "name": "mock-component-generator",
-  "description": "Generate a mock folder with mocks for all ts and tsx files within the folder",
-  "version": "0.1.5",
+  "description": "Generate a mock folder with mocks for all jsx and tsx files within the folder",
+  "version": "0.1.6",
   "author": "Johannes Eichler",
   "bin": {
     "generateMockComponents": "./bin/run"
@@ -57,8 +57,7 @@
   "scripts": {
     "posttest": "eslint . --ext .ts --config .eslintrc",
     "prepack": "rm -rf lib && tsc -b",
-    "test": "jest",
-    "version": "oclif-dev readme && git add README.md"
+    "test": "jest"
   },
   "types": "lib/index.d.ts"
 }
