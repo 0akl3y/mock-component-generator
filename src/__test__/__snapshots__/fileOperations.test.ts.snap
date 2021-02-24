@@ -11,3 +11,8 @@ exports[`fileOperations walks generates mock files for all existing files in the
 "import React from 'react'
 export const HelloComponent = props => React.createElement(\\"HelloComponent\\", props);"
 `;
+
+exports[`fileOperations walks generates mock files for all existing files in the dir 3`] = `
+"import React from 'react'
+export const foo = () => jest.fn();"
+`;

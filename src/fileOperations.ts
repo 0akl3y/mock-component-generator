@@ -31,7 +31,7 @@ export async function generateMocksInDir(
   options?: MockGeneratorOptions
 ) {
   const files = fs.readdirSync(dir)
-  const tsxFiles = files.filter((file: string) => file.match(/\.[jt]sx/))
+  const tsxFiles = files.filter((file: string) => file.match(/\.[jt]sx?/))
 
   if (!mockFolderExists(dir)) {
     fs.mkdirSync(`${dir}/__mocks__`)
