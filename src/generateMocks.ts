@@ -107,6 +107,62 @@ export const generateMock = (code: string, options?: MockGeneratorOptions) => {
     },
   }
 
+  const namedFnComponentVisitor = (name: string) => ({
+    //handle functional components
+    JSXElement(path: any) {      
+      const params = path.getFunctionParent()?.node?.params
+      const functionName = (path.findParent(
+        (path: any) =>
+          path.isVariableDeclarator() || path.isFunctionDeclaration()
+      )?.node as any)?.id.name
+      if(functionName === name){         
+        const mockedElement = t.callExpression(
+          t.identifier('React.createElement'),
+          [t.stringLiteral(functionName), ...params]
+        )  
+        
+        //TODO Figure out to find siblings effectively
+        const parentPath = path.findParent((path: any) =>
+          path.isProgram()
+        )       
+        console.log(parentPath)
+        path.skip()        
+      }
+      
+    },
+  })
+
+  const defaultExportVisitor = {
+    //handle export defaults
+    FunctionDeclaration(path: any) {
+      console.log('OptFunctionDeclaration')
+      console.log(path.node)
+    },
+    ClassDeclaration(path: any) {
+      console.log('OptClassDeclaration')
+      console.log(path.node)      
+    },
+    Expression(path: any) {      
+      const {name: expressionName} =path.node
+      const parentPath = path.findParent((path: any) =>
+        path.isProgram()
+      )      
+      parentPath.traverse(
+        namedFnComponentVisitor(expressionName)
+      )
+    }
+  }
+
+  // handle default exports
+
+  traverse (ast, {
+    ExportDefaultDeclaration(path) {      
+      path.traverse(defaultExportVisitor)                
+    },
+  })
+
+  // handle rest
+
   traverse(ast, {
     // remove all imports
     ImportDeclaration(path) {
