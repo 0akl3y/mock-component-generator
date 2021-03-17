@@ -109,26 +109,21 @@ export const generateMock = (code: string, options?: MockGeneratorOptions) => {
 
   const namedFnComponentVisitor = (name: string) => ({
     //handle functional components
-    JSXElement(path: any) {      
+    JSXElement(path: any) {
       const params = path.getFunctionParent()?.node?.params
-      const functionName = (path.findParent(
-        (path: any) =>
-          path.isVariableDeclarator() || path.isFunctionDeclaration()
-      )?.node as any)?.id.name
-      if(functionName === name){         
+
+      const declaratorPath = path.findParent(
+        (path) => path.isVariableDeclarator() || path.isFunctionDeclaration()
+      )
+      const functionName = (declaratorPath?.node ?? {})?.id.name
+      if (functionName === name) {
         const mockedElement = t.callExpression(
           t.identifier('React.createElement'),
           [t.stringLiteral(functionName), ...params]
-        )  
-        
-        //TODO Figure out to find siblings effectively
-        const parentPath = path.findParent((path: any) =>
-          path.isProgram()
-        )       
-        console.log(parentPath)
-        path.skip()        
+        )
+
+        path.skip()
       }
-      
     },
   })
 
@@ -140,63 +135,70 @@ export const generateMock = (code: string, options?: MockGeneratorOptions) => {
     },
     ClassDeclaration(path: any) {
       console.log('OptClassDeclaration')
-      console.log(path.node)      
+      console.log(path.node)
     },
-    Expression(path: any) {      
-      const {name: expressionName} =path.node
-      const parentPath = path.findParent((path: any) =>
-        path.isProgram()
-      )      
-      parentPath.traverse(
-        namedFnComponentVisitor(expressionName)
-      )
-    }
+    Expression(path: any) {
+      const { name: expressionName } = path.node
+      const referencePath = path.scope.getBinding(expressionName)
+        .referencePaths[0]
+
+      path.skip()
+
+      // const parentPath = path.findParent((path: any) => path.isProgram())
+      // parentPath.traverse(namedFnComponentVisitor(expressionName))
+    },
   }
 
   // handle default exports
 
-  traverse (ast, {
-    ExportDefaultDeclaration(path) {      
-      path.traverse(defaultExportVisitor)                
+  traverse(ast, {
+    ExportDefaultDeclaration(path) {
+      const bindingName = (path.node.declaration as any)?.name
+
+      const parentPath = path.findParent((path) => {
+        return path.isProgram()
+      })
+
+      parentPath!.traverse(namedFnComponentVisitor(bindingName))
     },
   })
 
   // handle rest
 
-  traverse(ast, {
-    // remove all imports
-    ImportDeclaration(path) {
-      if (!options?.keepImports) {
-        path.remove()
-      }
-    },
+  // traverse(ast, {
+  //   // remove all imports
+  //   ImportDeclaration(path) {
+  //     if (!options?.keepImports) {
+  //       path.remove()
+  //     }
+  //   },
 
-    //transform functions to mock
-    Function(path) {
-      const declaratorPath = path.findParent((path: any) =>
-        path.isVariableDeclaration()
-      )
-      if (!hasExportDeclaration(path)) {
-        declaratorPath?.remove()
-      } else {
-        path.traverse(fnComponentVisitor)
-      }
-      path.skip()
-    },
+  //   //transform functions to mock
+  //   Function(path) {
+  //     const declaratorPath = path.findParent((path: any) =>
+  //       path.isVariableDeclaration()
+  //     )
+  //     if (!hasExportDeclaration(path)) {
+  //       declaratorPath?.remove()
+  //     } else {
+  //       path.traverse(fnComponentVisitor)
+  //     }
+  //     path.skip()
+  //   },
 
-    //transform classes to mock
-    Class(path) {
-      const declaratorPath = path.findParent((path: any) =>
-        path.isVariableDeclaration()
-      )
-      if (!hasExportDeclaration(path)) {
-        declaratorPath?.remove()
-      } else {
-        path.traverse(classComponentVisitor)
-      }
-      path.skip()
-    },
-  })
+  //   //transform classes to mock
+  //   Class(path) {
+  //     const declaratorPath = path.findParent((path: any) =>
+  //       path.isVariableDeclaration()
+  //     )
+  //     if (!hasExportDeclaration(path)) {
+  //       declaratorPath?.remove()
+  //     } else {
+  //       path.traverse(classComponentVisitor)
+  //     }
+  //     path.skip()
+  //   },
+  // })
 
   const output = generate(
     ast,
