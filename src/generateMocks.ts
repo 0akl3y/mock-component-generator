@@ -173,21 +173,43 @@ export const generateMock = (code: string, options?: MockGeneratorOptions) => {
       }
     },
 
-    ExportDefaultDeclaration(path: NodePath<t.ExportDefaultDeclaration>) {
-
-      if(path.node.declaration )
-      
-    },
-
     Function(path) {
       const declaratorPath = path.findParent((path: any) =>
         path.isVariableDeclaration()
       )
-      if (!hasExportDeclaration(path)) {
-        declaratorPath?.remove()
-      } else {
-        path.traverse(fnComponentVisitor)
+      declaratorPath?.remove()
+      path.skip()
+    },
+
+    Expression(path: NodePath<t.Expression>) {
+      if (!path.isArrowFunctionExpression()) {
+        const parentPath = path.findParent((path) => {
+          return path.isExportDefaultDeclaration()
+        }) as NodePath<t.ExportDefaultDeclaration>
+        parentPath?.remove()
       }
+    },
+
+    JSXElement(path) {
+      let parent: NodePath<t.Function> | NodePath<t.Class> | null
+
+      parent = path.findParent(
+        (path) => path.isFunction() || path.isClass()
+      ) as typeof parent
+
+      if (parent?.isFunction()) {
+        const params = parent.node?.params as any[]
+        const functionName = (path.findParent(
+          (path: NodePath) =>
+            path.isVariableDeclarator() || path.isFunctionDeclaration()
+        )?.node as any)?.id.name
+        const mockedElement = t.callExpression(
+          t.identifier('React.createElement'),
+          [t.stringLiteral(functionName), ...params]
+        )
+        path.replaceWith(mockedElement)
+      }
+
       path.skip()
     },
 
