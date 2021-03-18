@@ -2,7 +2,7 @@
 import { transform } from '@babel/core'
 import generate from '@babel/generator'
 import * as parser from '@babel/parser'
-import traverse from '@babel/traverse'
+import traverse, { NodePath } from '@babel/traverse'
 import * as t from '@babel/types'
 
 export interface MockGeneratorOptions {
@@ -57,15 +57,31 @@ export const generateMock = (code: string, options?: MockGeneratorOptions) => {
       ),
     ])
 
-  const hasExportDeclaration = (path: any) =>
-    Boolean(path.findParent((path: any) => path.isExportDeclaration()))
+  const exportDefaultFunctionHelper = (functionName: string, params: any[]) =>
+    t.exportDefaultDeclaration(
+      t.arrowFunctionExpression(
+        params,
+        t.blockStatement([
+          t.returnStatement(
+            t.callExpression(t.identifier('React.createElement'), [
+              t.stringLiteral(functionName),
+              ...params,
+            ])
+          ),
+        ]),
+        false
+      )
+    )
+
+  const hasExportDeclaration = (path: NodePath) =>
+    Boolean(path.findParent((path) => path.isExportDeclaration()))
 
   const fnComponentVisitor = {
     //handle functional components
-    JSXElement(path: any) {
-      const params = path.getFunctionParent()?.node?.params
+    JSXElement(path: NodePath<t.JSXElement>) {
+      const params = path.getFunctionParent()?.node?.params ?? ([] as any[])
       const functionName = (path.findParent(
-        (path: any) =>
+        (path: NodePath) =>
           path.isVariableDeclarator() || path.isFunctionDeclaration()
       )?.node as any)?.id.name
 
@@ -82,8 +98,8 @@ export const generateMock = (code: string, options?: MockGeneratorOptions) => {
       path.skip()
     },
     //handle all other types of functions
-    Expression(path: any) {
-      const params = path.getFunctionParent()?.node?.params
+    Expression(path: NodePath<t.Expression>) {
+      const params = path.getFunctionParent()?.node?.params ?? ([] as any)
       const jestMock = t.callExpression(t.identifier('jest.fn'), [...params])
       path.replaceWith(jestMock)
       path.skip()
@@ -92,16 +108,16 @@ export const generateMock = (code: string, options?: MockGeneratorOptions) => {
 
   const classComponentVisitor = {
     //handle functional components
-    JSXElement(path: any) {
+    JSXElement(path: NodePath<t.JSXElement>) {
       const classParent = path.findParent((path: any) => path.isClass())
-      const classDeclaration = path.findParent((path: any) =>
+      const classDeclaration = path.findParent((path: NodePath) =>
         path.isClassDeclaration()
-      )
-      const className = (classDeclaration?.node as any)?.id.name
+      ) as NodePath<t.ClassDeclaration> | null
+      const className = classDeclaration?.node?.id.name ?? ''
       const mockedFunction = mockFunctionBlockHelper(className, [
         t.identifier('props'),
       ])
-      classParent.replaceWith(mockedFunction)
+      classParent?.replaceWith(mockedFunction)
 
       path.skip()
     },
@@ -109,13 +125,16 @@ export const generateMock = (code: string, options?: MockGeneratorOptions) => {
 
   const namedFnComponentVisitor = (name: string) => ({
     //handle functional components
-    JSXElement(path: any) {
-      const params = path.getFunctionParent()?.node?.params
+    JSXElement(path: NodePath<t.JSXElement>) {
+      const params = path.getFunctionParent()?.node?.params as any[]
 
       const declaratorPath = path.findParent(
         (path) => path.isVariableDeclarator() || path.isFunctionDeclaration()
-      )
-      const functionName = (declaratorPath?.node ?? {})?.id.name
+      ) as
+        | NodePath<t.VariableDeclarator>
+        | NodePath<t.FunctionDeclaration>
+        | null
+      const functionName = (declaratorPath?.node as any)?.id?.name
       if (functionName === name) {
         const mockedElement = t.callExpression(
           t.identifier('React.createElement'),
