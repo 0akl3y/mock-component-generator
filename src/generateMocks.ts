@@ -4,6 +4,8 @@ import generate from '@babel/generator'
 import * as parser from '@babel/parser'
 import traverse, { NodePath } from '@babel/traverse'
 import * as t from '@babel/types'
+import { pathsToModuleNameMapper } from 'ts-jest'
+import { ArrowFunction } from 'typescript'
 
 export interface MockGeneratorOptions {
   keepImports?: boolean
@@ -31,12 +33,6 @@ export const generateMock = (code: string, options?: MockGeneratorOptions) => {
     sourceType: 'module',
     plugins: ['typescript', 'jsx'],
   })
-
-  // const importDeclarationHelper = (identifier: string, source: string) =>
-  //   t.importDeclaration(
-  //     [t.importDefaultSpecifier(t.identifier("React"))],
-  //     t.stringLiteral("react")
-  //   );
 
   const mockFunctionBlockHelper = (functionName: string, params: any[]) =>
     t.variableDeclaration('const', [
@@ -73,11 +69,18 @@ export const generateMock = (code: string, options?: MockGeneratorOptions) => {
       )
     )
 
-  const hasExportDeclaration = (path: NodePath) =>
+  const hasExportDeclaration = (path: NodePath<any>) =>
     Boolean(path.findParent((path) => path.isExportDeclaration()))
 
   const fnComponentVisitor = {
     //handle functional components
+    ArrowFunctionExpression(path: NodePath<t.ArrowFunctionExpression>) {
+      path.skip()
+    },
+    FunctionDeclaration(path: NodePath<t.FunctionDeclaration>) {
+      path.skip()
+    },
+
     JSXElement(path: NodePath<t.JSXElement>) {
       const params = path.getFunctionParent()?.node?.params ?? ([] as any[])
       const functionName = (path.findParent(
@@ -123,101 +126,84 @@ export const generateMock = (code: string, options?: MockGeneratorOptions) => {
     },
   }
 
-  const namedFnComponentVisitor = (name: string) => ({
+  const namedFnComponentVisitor = (args: { defaultExportName: string }) => ({
     //handle functional components
     JSXElement(path: NodePath<t.JSXElement>) {
       const params = path.getFunctionParent()?.node?.params as any[]
-
-      const declaratorPath = path.findParent(
+      const functionPath = path.findParent(
         (path) => path.isVariableDeclarator() || path.isFunctionDeclaration()
       ) as
         | NodePath<t.VariableDeclarator>
         | NodePath<t.FunctionDeclaration>
         | null
-      const functionName = (declaratorPath?.node as any)?.id?.name
-      if (functionName === name) {
-        const mockedElement = t.callExpression(
-          t.identifier('React.createElement'),
-          [t.stringLiteral(functionName), ...params]
-        )
 
-        path.skip()
+      const functionName = (functionPath?.node as any)?.id?.name
+      if (functionName === args.defaultExportName) {
+        const exportDefaultFunction = exportDefaultFunctionHelper(
+          functionName,
+          params
+        )
+        if (functionPath?.isVariableDeclarator()) {
+          const arrowFunctionVariableDeclaration = functionPath.findParent(
+            (path) => path.isVariableDeclaration()
+          )
+          arrowFunctionVariableDeclaration?.replaceWith(exportDefaultFunction)
+        } else {
+          functionPath?.replaceWith(exportDefaultFunction)
+        }
       }
     },
   })
 
-  const defaultExportVisitor = {
-    //handle export defaults
-    FunctionDeclaration(path: any) {
-      console.log('OptFunctionDeclaration')
-      console.log(path.node)
-    },
-    ClassDeclaration(path: any) {
-      console.log('OptClassDeclaration')
-      console.log(path.node)
-    },
-    Expression(path: any) {
-      const { name: expressionName } = path.node
-      const referencePath = path.scope.getBinding(expressionName)
-        .referencePaths[0]
-
-      path.skip()
-
-      // const parentPath = path.findParent((path: any) => path.isProgram())
-      // parentPath.traverse(namedFnComponentVisitor(expressionName))
-    },
-  }
-
-  // handle default exports
-
   traverse(ast, {
-    ExportDefaultDeclaration(path) {
-      const bindingName = (path.node.declaration as any)?.name
-
+    ExportDefaultDeclaration(path: NodePath<t.ExportDefaultDeclaration>) {
+      const defaultExportName = (path.node.declaration as any)?.name
       const parentPath = path.findParent((path) => {
         return path.isProgram()
-      })
-
-      parentPath!.traverse(namedFnComponentVisitor(bindingName))
+      }) as NodePath<t.Program>
+      parentPath?.traverse(namedFnComponentVisitor({ defaultExportName }))
     },
   })
 
-  // handle rest
+  traverse(ast, {
+    // remove all imports
+    ImportDeclaration(path) {
+      if (!options?.keepImports) {
+        path.remove()
+      }
+    },
 
-  // traverse(ast, {
-  //   // remove all imports
-  //   ImportDeclaration(path) {
-  //     if (!options?.keepImports) {
-  //       path.remove()
-  //     }
-  //   },
+    ExportDefaultDeclaration(path: NodePath<t.ExportDefaultDeclaration>) {
 
-  //   //transform functions to mock
-  //   Function(path) {
-  //     const declaratorPath = path.findParent((path: any) =>
-  //       path.isVariableDeclaration()
-  //     )
-  //     if (!hasExportDeclaration(path)) {
-  //       declaratorPath?.remove()
-  //     } else {
-  //       path.traverse(fnComponentVisitor)
-  //     }
-  //     path.skip()
-  //   },
+      if(path.node.declaration )
+      
+    },
 
-  //   //transform classes to mock
-  //   Class(path) {
-  //     const declaratorPath = path.findParent((path: any) =>
-  //       path.isVariableDeclaration()
-  //     )
-  //     if (!hasExportDeclaration(path)) {
-  //       declaratorPath?.remove()
-  //     } else {
-  //       path.traverse(classComponentVisitor)
-  //     }
-  //     path.skip()
-  //   },
-  // })
+    Function(path) {
+      const declaratorPath = path.findParent((path: any) =>
+        path.isVariableDeclaration()
+      )
+      if (!hasExportDeclaration(path)) {
+        declaratorPath?.remove()
+      } else {
+        path.traverse(fnComponentVisitor)
+      }
+      path.skip()
+    },
+
+    //transform classes to mock
+    Class(path) {
+      const declaratorPath = path.findParent((path: any) =>
+        path.isVariableDeclaration()
+      )
+      if (!hasExportDeclaration(path)) {
+        declaratorPath?.remove()
+      } else {
+        path.traverse(classComponentVisitor)
+      }
+      path.skip()
+    },
+  })
 
   const output = generate(
     ast,
