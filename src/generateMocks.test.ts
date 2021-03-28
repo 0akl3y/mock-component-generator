@@ -1,7 +1,7 @@
 import { generateMock } from './generateMocks'
 
 describe('generateMocks', () => {
-  it.skip('replaces the import statement with only react', () => {
+  it('replaces the import statement with only react', () => {
     const input = `
     import Stuff from '@/some-stuff'
     import Blah from '@/some-blah'
@@ -15,7 +15,7 @@ describe('generateMocks', () => {
   })
 
   describe('components', () => {
-    it.skip('mocks functional components of different sort', () => {
+    it('mocks functional components of different sort', () => {
       const input = `
       import {SomeView, SomeViewInParans, SomeBracedView} from 'fantasien'
       
@@ -28,7 +28,7 @@ describe('generateMocks', () => {
       expect(generateMock(input)).toMatchSnapshot()
     })
 
-    it.skip('removes non exported components', () => {
+    it('removes non exported components', () => {
       const input = `
       import {SomeInternalComponent, SomeExternalComponent} from 'fantasien'
       const _internalComponent = props => <SomeInternalComponent />      
@@ -38,7 +38,7 @@ describe('generateMocks', () => {
       expect(generateMock(input)).toMatchSnapshot()
     })
 
-    it.skip('mocks functional components', () => {
+    it('mocks functional components', () => {
       const input = `
       import React from 'react'
       import {Row} from 'superuiguide'
@@ -54,7 +54,7 @@ describe('generateMocks', () => {
       expect(generateMock(input)).toMatchSnapshot()
     })
 
-    it.skip('mocks non component functions with jest.fn', () => {
+    it('mocks non component functions with jest.fn', () => {
       const input = `
       export const function1 = (args: string[]) => { return 'function 1'}
       export const function2 = args => 'function 2'
@@ -63,7 +63,7 @@ describe('generateMocks', () => {
       expect(generateMock(input)).toMatchSnapshot()
     })
 
-    it.skip('mocks functions', () => {
+    it('mocks functions', () => {
       const input = `
       export function fn1(args) {
          return 'fn1'
@@ -77,7 +77,7 @@ describe('generateMocks', () => {
       expect(generateMock(input)).toMatchSnapshot()
     })
 
-    it.skip('removes comments', () => {
+    it('removes comments', () => {
       const input = `
       // This is some unneccessary comment
       /*
@@ -89,7 +89,7 @@ describe('generateMocks', () => {
       expect(generateMock(input)).toMatchSnapshot()
     })
 
-    it.skip('mocks class component', () => {
+    it('mocks class component', () => {
       const input = `
       import React from "react";
       export class SomeClassComponent extends React.PureComponent<{ name: string }> {
@@ -101,7 +101,7 @@ describe('generateMocks', () => {
       expect(generateMock(input)).toMatchSnapshot()
     })
 
-    it.skip('removes typescript', () => {
+    it('removes typescript', () => {
       const input = `
       import React from "react";
       export const parans = (props: {id: string}) => (<SomeViewInParans />)

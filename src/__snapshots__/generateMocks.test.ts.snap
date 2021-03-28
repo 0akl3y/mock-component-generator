@@ -2,8 +2,9 @@
 
 exports[`generateMocks components handles export default correctly 1`] = `
 "import React from 'react'
-const someStuff;
-export default SomeComponent;"
+export default (props => {
+  return React.createElement(\\"SomeComponent\\", props);
+});"
 `;
 
 exports[`generateMocks components mocks class component 1`] = `
@@ -15,7 +16,6 @@ export const SomeClassComponent = props => {
 
 exports[`generateMocks components mocks functional components 1`] = `
 "import React from 'react'
-const someStuff;
 export const SomeComponent = props => {
   return React.createElement(\\"SomeComponent\\", props);
 };"
@@ -29,7 +29,7 @@ export const parans = props => React.createElement(\\"parans\\", props);
 export const braced = props => {
   return React.createElement(\\"braced\\", props);
 };
-export const someFunction = props => jest.fn(props);"
+export const someFunction = jest.fn();"
 `;
 
 exports[`generateMocks components mocks functions 1`] = `
@@ -44,16 +44,14 @@ export function FnComponent(props) {
 
 exports[`generateMocks components mocks non component functions with jest.fn 1`] = `
 "import React from 'react'
-export const function1 = args => {
-  return jest.fn(args);
-};
-export const function2 = args => jest.fn(args);
-export const function3 = args => jest.fn(args);"
+export const function1 = args => jest.fn();
+export const function2 = jest.fn();
+export const function3 = jest.fn();"
 `;
 
 exports[`generateMocks components removes comments 1`] = `
 "import React from 'react'
-export const function2 = args => jest.fn(args);"
+export const function2 = jest.fn();"
 `;
 
 exports[`generateMocks components removes non exported components 1`] = `
