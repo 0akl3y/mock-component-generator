@@ -210,6 +210,22 @@ export const generateMock = (code: string, options?: MockGeneratorOptions) => {
       }
     },
 
+    Class(path: NodePath<t.Class>) {
+      const classNode = path?.node as t.Class
+      const className = classNode?.id?.name
+
+      const superClass = classNode?.superClass as t.MemberExpression
+      if (
+        ((superClass?.object as t.Identifier)?.name === 'React' &&
+          (superClass?.property as t.Identifier)?.name === 'PureComponent') ||
+        (superClass?.property as t.Identifier)?.name === 'Component'
+      ) {
+        const mockedFunction = mockFunctionBlockHelper(className ?? '', [
+          t.identifier('props'),
+        ])
+        path?.replaceWith(mockedFunction)
+      }
+    },
     JSXElement(path) {
       let parent: NodePath<t.Function> | NodePath<t.Class> | null
       // eslint-disable-next-line prefer-const
@@ -232,14 +248,6 @@ export const generateMock = (code: string, options?: MockGeneratorOptions) => {
           [t.stringLiteral(functionName ?? ''), ...params]
         )
         path.replaceWith(mockedElement)
-      }
-
-      if (parent?.isClass()) {
-        const className = parent?.node?.id?.name ?? ''
-        const mockedFunction = mockFunctionBlockHelper(className, [
-          t.identifier('props'),
-        ])
-        parent?.replaceWith(mockedFunction)
       }
     },
     BlockStatement(path: NodePath<t.BlockStatement>) {
