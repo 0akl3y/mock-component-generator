@@ -2,7 +2,7 @@
 import { transform } from '@babel/core'
 import generate from '@babel/generator'
 import * as parser from '@babel/parser'
-import traverse, { NodePath, TraverseOptions } from '@babel/traverse'
+import traverse, { NodePath, TraverseOptions, Visitor } from '@babel/traverse'
 import * as t from '@babel/types'
 
 export interface MockGeneratorOptions {
@@ -132,9 +132,7 @@ export const generateMock = (code: string, options?: MockGeneratorOptions) => {
     },
   })
 
-  const handleCallExpressionVistor: TraverseOptions<
-    NodePath<t.CallExpression>
-  > = {
+  const handleCallExpressionVistor: Visitor = {
     Identifier(path: NodePath<t.Identifier>) {
       const parentPath = path.findParent((p) =>
         t.isExportDefaultDeclaration(p)
@@ -156,10 +154,7 @@ export const generateMock = (code: string, options?: MockGeneratorOptions) => {
       }
 
       if (defaultCallExpression) {
-        const parentPath = path.findParent((path) => {
-          return path.isProgram()
-        }) as NodePath<t.Program>
-        parentPath?.traverse(handleDefaultExportVisitor({ defaultExportName }))
+        path?.traverse(handleCallExpressionVistor)
       }
     },
   })
