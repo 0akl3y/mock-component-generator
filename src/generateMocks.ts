@@ -2,7 +2,7 @@
 import { transform } from '@babel/core'
 import generate from '@babel/generator'
 import * as parser from '@babel/parser'
-import traverse, { NodePath, TraverseOptions, Visitor } from '@babel/traverse'
+import traverse, { NodePath, Visitor } from '@babel/traverse'
 import * as t from '@babel/types'
 
 export interface MockGeneratorOptions {
@@ -99,7 +99,9 @@ export const generateMock = (code: string, options?: MockGeneratorOptions) => {
     )
   }
 
-  const handleDefaultExportVisitor = (args: { defaultExportName: string }) => ({
+  const replaceDefaultExportReference = (args: {
+    defaultExportName: string
+  }): Visitor => ({
     //handle functional components
     JSXElement(path: NodePath<t.JSXElement>) {
       const functionParent = path.getFunctionParent()
@@ -132,12 +134,22 @@ export const generateMock = (code: string, options?: MockGeneratorOptions) => {
     },
   })
 
-  const handleCallExpressionVistor: Visitor = {
-    Identifier(path: NodePath<t.Identifier>) {
-      const parentPath = path.findParent((p) =>
-        t.isExportDefaultDeclaration(p)
-      ) as NodePath<t.ExportDefaultDeclaration>
-      parentPath?.node?.declaration
+  const handleCallExpressionAsDeclarationVistor: Visitor = {
+    CallExpression(path: NodePath<t.CallExpression>) {
+      const identifiers = path?.node?.arguments.filter((arg) =>
+        t.isIdentifier(arg)
+      ) as t.Identifier[]
+
+      identifiers.forEach((identifier) => {
+        const parentPath = path.findParent((path) => {
+          return path.isProgram()
+        }) as NodePath<t.Program>
+        parentPath?.traverse(
+          replaceDefaultExportReference({
+            defaultExportName: identifier?.name ?? '',
+          })
+        )
+      })
     },
   }
 
@@ -150,11 +162,13 @@ export const generateMock = (code: string, options?: MockGeneratorOptions) => {
         const parentPath = path.findParent((path) => {
           return path.isProgram()
         }) as NodePath<t.Program>
-        parentPath?.traverse(handleDefaultExportVisitor({ defaultExportName }))
+        parentPath?.traverse(
+          replaceDefaultExportReference({ defaultExportName })
+        )
       }
 
       if (defaultCallExpression) {
-        path?.traverse(handleCallExpressionVistor)
+        path?.traverse(handleCallExpressionAsDeclarationVistor)
       }
     },
   })
@@ -187,11 +201,7 @@ export const generateMock = (code: string, options?: MockGeneratorOptions) => {
 
     ExportDefaultDeclaration(path: NodePath<t.ExportDefaultDeclaration>) {
       const declaration = path.node.declaration
-      if (
-        !t.isClass(declaration) &&
-        !t.isFunction(declaration) &&
-        !t.isCallExpression(declaration)
-      ) {
+      if (!t.isClass(declaration) && !t.isFunction(declaration)) {
         path.remove()
       }
     },
