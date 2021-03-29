@@ -89,7 +89,7 @@ describe('generateMocks', () => {
       expect(generateMock(input)).toMatchSnapshot()
     })
 
-    it.skip('mocks class component', () => {
+    it('mocks class component', () => {
       const input = `
       import React from "react";
       export class SomeClassComponent extends React.PureComponent<{ name: string }> {
@@ -127,7 +127,7 @@ describe('generateMocks', () => {
       expect(generateMock(input)).toMatchSnapshot()
     })
 
-    it('handles direct export defaults correctly', () => {
+    it.skip('handles direct export defaults correctly', () => {
       const input = `
       import React from 'react'
       import {Row} from 'superuiguide'
@@ -140,7 +140,7 @@ describe('generateMocks', () => {
       expect(generateMock(input)).toMatchSnapshot()
     })
 
-    it('handles export wrapped in higher order function', () => {
+    it.skip('handles export wrapped in higher order function', () => {
       const input = `
       import React from 'react'
       import {Row} from 'superuiguide'
@@ -155,7 +155,7 @@ describe('generateMocks', () => {
       expect(generateMock(input)).toMatchSnapshot()
     })
 
-    it('handles styled components', () => {
+    it.skip('handles styled components', () => {
       const input = `
       import React from 'react'
       

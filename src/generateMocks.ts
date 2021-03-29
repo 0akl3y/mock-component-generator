@@ -194,6 +194,10 @@ export const generateMock = (code: string, options?: MockGeneratorOptions) => {
       }
     },
 
+    // Method(path: NodePath<t.Method>) {
+    //   path.remove()
+    // },
+
     TaggedTemplateExpression(path: NodePath<t.TaggedTemplateExpression>) {
       const parent = path.findParent((p) => t.isVariableDeclaration(p))
       parent?.remove()
