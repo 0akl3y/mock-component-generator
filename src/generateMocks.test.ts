@@ -154,5 +154,25 @@ describe('generateMocks', () => {
       `
       expect(generateMock(input)).toMatchSnapshot()
     })
+
+    it('handles styled components', () => {
+      const input = `
+      import React from 'react'
+      
+      import {Row} from 'superuiguide'
+      const someStuff
+
+      const Thing = styled.View\`
+        background-color: black;      
+      \`
+
+      export const SomeComponent = (props) => {
+        return <Thing />
+      }
+                  
+      
+      `
+      expect(generateMock(input)).toMatchSnapshot()
+    })
   })
 })

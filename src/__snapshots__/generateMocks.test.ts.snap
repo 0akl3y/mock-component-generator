@@ -21,6 +21,13 @@ export default (props => {
 });"
 `;
 
+exports[`generateMocks components handles styled components 1`] = `
+"import React from 'react'
+export const SomeComponent = props => {
+  return React.createElement(\\"SomeComponent\\", props);
+};"
+`;
+
 exports[`generateMocks components mocks class component 1`] = `
 "import React from 'react'
 export const SomeClassComponent = props => {
