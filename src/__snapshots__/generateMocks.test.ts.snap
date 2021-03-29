@@ -1,10 +1,22 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`generateMocks components handles direct export defaults correctly 1`] = `
+"import React from 'react'
+export default (props => {
+  return React.createElement(\\"\\", props);
+});"
+`;
+
 exports[`generateMocks components handles export default correctly 1`] = `
 "import React from 'react'
 export default (props => {
   return React.createElement(\\"SomeComponent\\", props);
 });"
+`;
+
+exports[`generateMocks components handles export wrapped in higher order function 1`] = `
+"import React from 'react'
+"
 `;
 
 exports[`generateMocks components mocks class component 1`] = `
