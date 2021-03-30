@@ -1,7 +1,7 @@
 {
   "name": "mock-component-generator",
   "description": "Generate a mock folder with mocks for all jsx and tsx files within the folder",
-  "version": "0.1.7",
+  "version": "0.2",
   "author": "Johannes Eichler",
   "bin": {
     "generateMockComponents": "./bin/run"

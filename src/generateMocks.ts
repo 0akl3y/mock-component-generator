@@ -78,6 +78,14 @@ export const generateMock = (code: string, options?: MockGeneratorOptions) => {
     []
   )
 
+  const jestFunctionBlockHelper = (functionName: string, params: any[]) =>
+    t.variableDeclaration('const', [
+      t.variableDeclarator(
+        t.identifier(functionName),
+        t.arrowFunctionExpression(params, jestFn)
+      ),
+    ])
+
   const hasExportDeclaration = (path: NodePath<any>) =>
     Boolean(
       path.findParent(
@@ -99,10 +107,31 @@ export const generateMock = (code: string, options?: MockGeneratorOptions) => {
     )
   }
 
+  const isReactComponentClass = (node: unknown) => {
+    const classNode = node as t.ClassDeclaration
+    const className = classNode?.id?.name
+    const superClass = classNode?.superClass as t.MemberExpression
+    return (
+      (superClass?.object as t.Identifier)?.name === 'React' &&
+      ((superClass?.property as t.Identifier)?.name === 'PureComponent' ||
+        (superClass?.property as t.Identifier)?.name === 'Component')
+    )
+  }
+
   const replaceDefaultExportReference = (args: {
     defaultExportName: string
   }): Visitor => ({
     //handle functional components
+
+    ClassDeclaration(path: NodePath<t.ClassDeclaration>) {
+      if (isReactComponentClass(path.node)) {
+        const className = (path.node as t.ClassDeclaration)?.id?.name
+        const mock = exportDefaultFunctionHelper(className ?? '', [
+          t.identifier('props'),
+        ])
+        path?.replaceWith(mock)
+      }
+    },
     JSXElement(path: NodePath<t.JSXElement>) {
       const functionParent = path.getFunctionParent()
 
@@ -194,10 +223,6 @@ export const generateMock = (code: string, options?: MockGeneratorOptions) => {
       }
     },
 
-    // Method(path: NodePath<t.Method>) {
-    //   path.remove()
-    // },
-
     TaggedTemplateExpression(path: NodePath<t.TaggedTemplateExpression>) {
       const parent = path.findParent((p) => t.isVariableDeclaration(p))
       parent?.remove()
@@ -208,31 +233,30 @@ export const generateMock = (code: string, options?: MockGeneratorOptions) => {
       if (!t.isClass(declaration) && !t.isFunction(declaration)) {
         path.remove()
       }
+      if (isReactComponentClass(declaration)) {
+        const className = (declaration as t.ClassDeclaration)?.id?.name
+        const mock = exportDefaultFunctionHelper(className ?? '', [
+          t.identifier('props'),
+        ])
+        path?.replaceWith(mock)
+      }
     },
 
-    Class(path: NodePath<t.Class>) {
-      const classNode = path?.node as t.Class
-      const className = classNode?.id?.name
-
-      const superClass = classNode?.superClass as t.MemberExpression
-      if (
-        ((superClass?.object as t.Identifier)?.name === 'React' &&
-          (superClass?.property as t.Identifier)?.name === 'PureComponent') ||
-        (superClass?.property as t.Identifier)?.name === 'Component'
-      ) {
+    ExportNamedDeclaration(path: NodePath<t.ExportNamedDeclaration>) {
+      const classDeclaration = path.node.declaration as t.ClassDeclaration
+      const className = classDeclaration?.id?.name
+      if (isReactComponentClass(classDeclaration)) {
         const mockedFunction = mockFunctionBlockHelper(className ?? '', [
           t.identifier('props'),
         ])
-        path?.replaceWith(mockedFunction)
+        path?.replaceWith(t.exportNamedDeclaration(mockedFunction))
       }
     },
+
     JSXElement(path) {
       let parent: NodePath<t.Function> | NodePath<t.Class> | null
       // eslint-disable-next-line prefer-const
-      parent = path.findParent(
-        (path) => path.isFunction() || path.isClass()
-      ) as typeof parent
-
+      parent = path.findParent((path) => path.isFunction()) as typeof parent
       if (parent?.isFunction()) {
         const params = parent.node?.params as any[]
         const functionName = (path.findParent(
@@ -244,7 +268,6 @@ export const generateMock = (code: string, options?: MockGeneratorOptions) => {
             t.identifier('React'),
             t.identifier('createElement')
           ),
-
           [t.stringLiteral(functionName ?? ''), ...params]
         )
         path.replaceWith(mockedElement)
@@ -257,7 +280,14 @@ export const generateMock = (code: string, options?: MockGeneratorOptions) => {
           return t.isJSXElement(argument) || isReactElementCreator(argument)
         })
       ) {
-        path.replaceInline(jestFn)
+        const functionParent = path.getFunctionParent()
+        if (t.isArrowFunctionExpression(functionParent)) {
+          path.replaceInline(jestFn)
+        } else if (t.isFunctionDeclaration(functionParent)) {
+          const name =
+            (functionParent.node as t.FunctionDeclaration)?.id?.name ?? ''
+          functionParent.replaceWith(jestFunctionBlockHelper(name, []))
+        }
         path.skip()
       }
     },
