@@ -70,7 +70,7 @@ export function FnComponent(props) {
 
 exports[`generateMocks components mocks non component functions with jest.fn 1`] = `
 "import React from 'react'
-export const function1 = args => jest.fn();
+export const function1 = jest.fn();
 export const function2 = jest.fn();
 export const function3 = jest.fn();"
 `;

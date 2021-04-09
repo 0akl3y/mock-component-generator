@@ -80,10 +80,7 @@ export const generateMock = (code: string, options?: MockGeneratorOptions) => {
 
   const jestFunctionBlockHelper = (functionName: string, params: any[]) =>
     t.variableDeclaration('const', [
-      t.variableDeclarator(
-        t.identifier(functionName),
-        t.arrowFunctionExpression(params, jestFn)
-      ),
+      t.variableDeclarator(t.identifier(functionName), jestFn),
     ])
 
   const hasExportDeclaration = (path: NodePath<any>) =>
@@ -109,7 +106,6 @@ export const generateMock = (code: string, options?: MockGeneratorOptions) => {
 
   const isReactComponentClass = (node: unknown) => {
     const classNode = node as t.ClassDeclaration
-    const className = classNode?.id?.name
     const superClass = classNode?.superClass as t.MemberExpression
     return (
       (superClass?.object as t.Identifier)?.name === 'React' &&
@@ -282,7 +278,7 @@ export const generateMock = (code: string, options?: MockGeneratorOptions) => {
       ) {
         const functionParent = path.getFunctionParent()
         if (t.isArrowFunctionExpression(functionParent)) {
-          path.replaceInline(jestFn)
+          functionParent.replaceWith(jestFn)
         } else if (t.isFunctionDeclaration(functionParent)) {
           const name =
             (functionParent.node as t.FunctionDeclaration)?.id?.name ?? ''
@@ -299,7 +295,7 @@ export const generateMock = (code: string, options?: MockGeneratorOptions) => {
         !t.isJSXElement(body) &&
         !isReactElementCreator(body)
       ) {
-        path.replaceInline(jestFn)
+        path.replaceWith(jestFn)
       }
     },
   })
