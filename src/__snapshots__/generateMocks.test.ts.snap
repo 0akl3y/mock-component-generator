@@ -105,3 +105,16 @@ exports[`generateMocks components removes typescript 1`] = `
 "import React from 'react'
 export const parans = props => React.createElement(\\"parans\\", props);"
 `;
+
+exports[`generateMocks handles ExportNamedDeclarations 1`] = `
+"import React from 'react'
+const A = props => {
+  return React.createElement(\\"A\\", props);
+};
+
+const B = props => {
+  return React.createElement(\\"B\\", props);
+};
+
+export { A, B };"
+`;
