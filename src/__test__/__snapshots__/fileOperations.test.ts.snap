@@ -14,5 +14,5 @@ export const HelloComponent = props => React.createElement(\\"HelloComponent\\",
 
 exports[`fileOperations walks generates mock files for all existing files in the dir 3`] = `
 "import React from 'react'
-export const foo = () => jest.fn();"
+export const foo = jest.fn();"
 `;

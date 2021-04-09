@@ -9,16 +9,20 @@ export default (props => {
 
 exports[`generateMocks components handles export default correctly 1`] = `
 "import React from 'react'
-export default (props => {
+const SomeComponent = props => {
   return React.createElement(\\"SomeComponent\\", props);
-});"
+};
+
+export default SomeComponent;"
 `;
 
 exports[`generateMocks components handles export wrapped in higher order function 1`] = `
 "import React from 'react'
-export default (props => {
+const SomeComponent = props => {
   return React.createElement(\\"SomeComponent\\", props);
-});"
+};
+
+export default React.memo(SomeComponent);"
 `;
 
 exports[`generateMocks components handles styled components 1`] = `
@@ -77,9 +81,14 @@ export const function3 = jest.fn();"
 
 exports[`generateMocks components mocks referenced default class component 1`] = `
 "import React from 'react'
-export default (props => {
-  return React.createElement(\\"SomeClassComponent\\", props);
-});"
+class SomeClassComponent extends React.PureComponent {
+  render() {
+    return React.createElement(\\"\\");
+  }
+
+}
+
+export default SomeClassComponent;"
 `;
 
 exports[`generateMocks components removes comments 1`] = `

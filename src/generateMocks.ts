@@ -11,7 +11,8 @@ export interface MockGeneratorOptions {
 }
 
 export const generateMock = (code: string, options?: MockGeneratorOptions) => {
-  //strip typescript
+  // eslint-disable-next-line no-undef
+  const referencedSpecifiers: Set<string> = new Set([])
 
   const transformedCode = options?.keepTSTypes
     ? code
@@ -114,85 +115,39 @@ export const generateMock = (code: string, options?: MockGeneratorOptions) => {
     )
   }
 
-  const replaceDefaultExportReference = (args: {
-    defaultExportName: string
-  }): Visitor => ({
-    //handle functional components
-
-    ClassDeclaration(path: NodePath<t.ClassDeclaration>) {
-      if (isReactComponentClass(path.node)) {
-        const className = (path.node as t.ClassDeclaration)?.id?.name
-        const mock = exportDefaultFunctionHelper(className ?? '', [
-          t.identifier('props'),
-        ])
-        path?.replaceWith(mock)
-      }
-    },
-    JSXElement(path: NodePath<t.JSXElement>) {
-      const functionParent = path.getFunctionParent()
-
-      if (functionParent) {
-        const params = functionParent?.node?.params as any[]
-        const functionPath = path.findParent(
-          (path) => path.isVariableDeclarator() || path.isFunctionDeclaration()
-        ) as
-          | NodePath<t.VariableDeclarator>
-          | NodePath<t.FunctionDeclaration>
-          | null
-        const functionName = (functionPath?.node as any)?.id?.name
-        if (functionName === args.defaultExportName) {
-          const exportDefaultFunction = exportDefaultFunctionHelper(
-            functionName,
-            params
-          )
-          if (functionPath?.isVariableDeclarator()) {
-            const arrowFunctionVariableDeclaration = functionPath.findParent(
-              (path) => path.isVariableDeclaration()
-            )
-            arrowFunctionVariableDeclaration?.replaceWith(exportDefaultFunction)
-          } else {
-            functionPath?.replaceWith(exportDefaultFunction)
-          }
-          path.skip()
-        }
-      }
-    },
-  })
-
   const handleCallExpressionAsDeclarationVistor: Visitor = {
     CallExpression(path: NodePath<t.CallExpression>) {
       const identifiers = path?.node?.arguments.filter((arg) =>
         t.isIdentifier(arg)
       ) as t.Identifier[]
-
-      identifiers.forEach((identifier) => {
-        const parentPath = path.findParent((path) => {
-          return path.isProgram()
-        }) as NodePath<t.Program>
-        parentPath?.traverse(
-          replaceDefaultExportReference({
-            defaultExportName: identifier?.name ?? '',
-          })
-        )
+      identifiers.forEach(({ name }) => {
+        if (name) {
+          referencedSpecifiers.add(name)
+        }
       })
     },
   }
 
   traverse(ast, {
+    ExportNamedDeclaration(path: NodePath<t.ExportNamedDeclaration>) {
+      const { specifiers } = path.node
+      specifiers.forEach((elm) => {
+        referencedSpecifiers.add(
+          (elm.exported as t.StringLiteral)?.value ??
+            (elm.exported as t.Identifier)?.name
+        )
+      })
+    },
     ExportDefaultDeclaration(path: NodePath<t.ExportDefaultDeclaration>) {
       const defaultExportName = (path.node.declaration as t.Identifier)?.name
       const defaultCallExpression = path.node.declaration as t.CallExpression
 
       if (defaultExportName) {
-        const parentPath = path.findParent((path) => {
-          return path.isProgram()
-        }) as NodePath<t.Program>
-        parentPath?.traverse(
-          replaceDefaultExportReference({ defaultExportName })
-        )
+        referencedSpecifiers.add(defaultExportName)
       }
 
       if (defaultCallExpression) {
+        referencedSpecifiers.add(defaultExportName)
         path?.traverse(handleCallExpressionAsDeclarationVistor)
       }
     },
@@ -207,14 +162,19 @@ export const generateMock = (code: string, options?: MockGeneratorOptions) => {
       }
     },
 
-    VariableDeclaration(path: NodePath<t.VariableDeclaration>) {
-      if (!hasExportDeclaration(path)) {
+    VariableDeclarator(path: NodePath<t.VariableDeclarator>) {
+      const name = (path.node?.id as any)?.name
+      if (!hasExportDeclaration(path) && !referencedSpecifiers.has(name)) {
         path.remove()
       }
     },
 
     FunctionDeclaration(path: NodePath<t.FunctionDeclaration>) {
-      if (!hasExportDeclaration(path)) {
+      const name = path.node?.id?.name
+      if (
+        !hasExportDeclaration(path) &&
+        !referencedSpecifiers.has(name ?? '')
+      ) {
         path.remove()
       }
     },
@@ -226,9 +186,6 @@ export const generateMock = (code: string, options?: MockGeneratorOptions) => {
 
     ExportDefaultDeclaration(path: NodePath<t.ExportDefaultDeclaration>) {
       const declaration = path.node.declaration
-      if (!t.isClass(declaration) && !t.isFunction(declaration)) {
-        path.remove()
-      }
       if (isReactComponentClass(declaration)) {
         const className = (declaration as t.ClassDeclaration)?.id?.name
         const mock = exportDefaultFunctionHelper(className ?? '', [
@@ -237,7 +194,6 @@ export const generateMock = (code: string, options?: MockGeneratorOptions) => {
         path?.replaceWith(mock)
       }
     },
-
     ExportNamedDeclaration(path: NodePath<t.ExportNamedDeclaration>) {
       const classDeclaration = path.node.declaration as t.ClassDeclaration
       const className = classDeclaration?.id?.name
@@ -248,7 +204,6 @@ export const generateMock = (code: string, options?: MockGeneratorOptions) => {
         path?.replaceWith(t.exportNamedDeclaration(mockedFunction))
       }
     },
-
     JSXElement(path) {
       let parent: NodePath<t.Function> | NodePath<t.Class> | null
       // eslint-disable-next-line prefer-const
