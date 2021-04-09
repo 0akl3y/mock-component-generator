@@ -9,16 +9,20 @@ export default (props => {
 
 exports[`generateMocks components handles export default correctly 1`] = `
 "import React from 'react'
-export default (props => {
+const SomeComponent = props => {
   return React.createElement(\\"SomeComponent\\", props);
-});"
+};
+
+export default SomeComponent;"
 `;
 
 exports[`generateMocks components handles export wrapped in higher order function 1`] = `
 "import React from 'react'
-export default (props => {
+const SomeComponent = props => {
   return React.createElement(\\"SomeComponent\\", props);
-});"
+};
+
+export default React.memo(SomeComponent);"
 `;
 
 exports[`generateMocks components handles styled components 1`] = `
@@ -70,16 +74,21 @@ export function FnComponent(props) {
 
 exports[`generateMocks components mocks non component functions with jest.fn 1`] = `
 "import React from 'react'
-export const function1 = args => jest.fn();
+export const function1 = jest.fn();
 export const function2 = jest.fn();
 export const function3 = jest.fn();"
 `;
 
 exports[`generateMocks components mocks referenced default class component 1`] = `
 "import React from 'react'
-export default (props => {
-  return React.createElement(\\"SomeClassComponent\\", props);
-});"
+class SomeClassComponent extends React.PureComponent {
+  render() {
+    return React.createElement(\\"\\");
+  }
+
+}
+
+export default SomeClassComponent;"
 `;
 
 exports[`generateMocks components removes comments 1`] = `
@@ -95,4 +104,17 @@ export const externalComponent = props => React.createElement(\\"externalCompone
 exports[`generateMocks components removes typescript 1`] = `
 "import React from 'react'
 export const parans = props => React.createElement(\\"parans\\", props);"
+`;
+
+exports[`generateMocks handles ExportNamedDeclarations 1`] = `
+"import React from 'react'
+const A = props => {
+  return React.createElement(\\"A\\", props);
+};
+
+const B = props => {
+  return React.createElement(\\"B\\", props);
+};
+
+export { A, B };"
 `;

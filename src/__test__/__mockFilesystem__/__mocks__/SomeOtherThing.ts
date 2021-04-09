@@ -1,2 +1,3 @@
 import React from 'react'
-export const foo = () => jest.fn();
+
+export const foo = jest.fn();

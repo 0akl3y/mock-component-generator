@@ -197,4 +197,29 @@ describe('generateMocks', () => {
       expect(generateMock(input)).toMatchSnapshot()
     })
   })
+
+  it('handles ExportNamedDeclarations', () => {
+    const input = `
+    import React from 'react'
+    
+    import {Row} from 'superuiguide'
+    const someStuff
+
+    const Thing = styled.View\`
+      background-color: black;      
+    \`
+
+    const A = (props) => {
+      return <Thing />
+    }                  
+
+    const B = (props) => {
+      return <Thing />
+    }
+
+    export {A, B}
+    
+    `
+    expect(generateMock(input)).toMatchSnapshot()
+  })
 })
