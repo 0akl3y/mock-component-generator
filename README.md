@@ -23,8 +23,9 @@ Currently all components (class and functional) will be mocked as function.
 ```sh-session
 $ npm install -g mock-component-generator
 $ cd my-folder
-$ generateMockComponents foo/bar.*
+$ generateMockComponents **/foo/bar.*
 ...generating mocks
+```
 
 <!-- usagestop -->
 
@@ -42,61 +43,42 @@ $ generateMockComponents foo/bar.*
 
 <!-- example -->
 
-Running generateMockComponents in
+Running
 
 ```
-
-|- ComponentA.tsx
-|- ComponentB.jsx
-|- OtherStuff.ts
-
-```
-
-will result in
-
-```
-
-|- **mocks**
-|- ComponentA.tsx
-|- ComponentB.jsx
-|- OtherStuff.ts
-
-|- ComponentA.tsx
-|- ComponentB.jsx
-|- OtherStuff.ts
-
-```
-
-Calling generateMockComponents with a glob ist also possible
-
-```
-
-generateMockComponents ComponentB.\*
-
+generateMockComponents **/foo.*
 ```
 
 in
 
 ```
-
+|- foo.tsx
 |- ComponentA.tsx
 |- ComponentB.jsx
 |- OtherStuff.ts
+
+|- subfolder
+  |- foo.js
 
 ```
 
 will result in
 
 ```
+|- __mocks__
+  |- foo.tsx
 
-|- **mocks**
-|- ComponentB.jsx
 
 |- ComponentA.tsx
 |- ComponentB.jsx
 |- OtherStuff.ts
 
-````
+|- subfolder
+  |- __mocks__
+    |- foo.js
+  |- foo.js
+
+```
 
 where
 
@@ -109,7 +91,7 @@ export const HelloComponent = (props: { name: string }) => (
     <p>`${name}`</p>
   </div>
 )
-````
+```
 
 will be mocked like
 
