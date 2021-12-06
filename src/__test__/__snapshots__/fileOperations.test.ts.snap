@@ -1,18 +1,18 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`fileOperations walks generates mock files for all existing files in the dir 1`] = `
+exports[`fileOperations generate the files for the absolute path 1`] = `
 "import React from 'react'
 export const SomeClassComponent = props => {
   return React.createElement(\\"SomeClassComponent\\", props);
 };"
 `;
 
-exports[`fileOperations walks generates mock files for all existing files in the dir 2`] = `
+exports[`fileOperations generate the files for the absolute path 2`] = `
 "import React from 'react'
 export const HelloComponent = props => React.createElement(\\"HelloComponent\\", props);"
 `;
 
-exports[`fileOperations walks generates mock files for all existing files in the dir 3`] = `
+exports[`fileOperations generate the files for the absolute path 3`] = `
 "import React from 'react'
 export const foo = jest.fn();"
 `;

@@ -7,12 +7,12 @@ const fs = require('fs')
 const mockFolderPath = `${__dirname}/__mockFilesystem__/__mocks__`
 
 describe('fileOperations', () => {
-  beforeAll(() => {
+  beforeEach(() => {
     fs.rmdirSync(mockFolderPath, { force: true, recursive: true })
   })
 
-  it('walks generates mock files for all existing files in the dir', async () => {
-    await generateMocksInDir(`${__dirname}/__mockFilesystem__`)
+  it('generate the files for the absolute path', async () => {
+    await generateMocksInDir(`${__dirname}/__mockFilesystem__/*`)
 
     const mockFiles: string[] = fs.readdirSync(mockFolderPath, {
       encoding: 'utf-8',
@@ -25,5 +25,16 @@ describe('fileOperations', () => {
 
       expect(newContent).toMatchSnapshot()
     })
+  })
+
+  it('generates files for the glob', async () => {
+    await generateMocksInDir(`**/SomeOtherThing.*`)
+
+    const mockFiles: string[] = fs.readdirSync(mockFolderPath, {
+      encoding: 'utf-8',
+    }) as string[]
+
+    expect(mockFiles.length).toEqual(1)
+    expect(mockFiles[0]).toEqual('SomeOtherThing.ts')
   })
 })

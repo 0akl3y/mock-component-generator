@@ -1,4 +1,7 @@
+import { Glob } from 'glob'
 import { generateMock, MockGeneratorOptions } from './generateMocks'
+const glob = require('glob')
+const path = require('path')
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const fs = require('fs')
@@ -27,25 +30,27 @@ const mockFileExists = (dir: string, filenanme: string) => {
 }
 
 export async function generateMocksInDir(
-  dir: string,
+  file: string,
   options?: MockGeneratorOptions
 ) {
-  const files = fs.readdirSync(dir)
-  const tsxFiles = files.filter((file: string) => file.match(/\.[jt]sx?/))
+  const files = glob.sync(file)
 
-  if (!mockFolderExists(dir)) {
-    fs.mkdirSync(`${dir}/__mocks__`)
-  }
+  files.forEach((f) => {
+    const fullPath = path.relative(process.cwd(), f)
+    const currPath = path.dirname(fullPath)
 
-  tsxFiles.forEach((tsxFile: string) => {
-    const content = fs.readFileSync(`${dir}/${tsxFile}`, {
+    const currFile = path.basename(fullPath)
+    if (!mockFolderExists(currPath)) {
+      fs.mkdirSync(`${currPath}/__mocks__`)
+    }
+    const content = fs.readFileSync(`${f}`, {
       encoding: 'utf-8',
     })
     const mockContent = generateMock(content, options)
 
     //It should not overwrite existing mocks
-    if (!mockFileExists(dir, tsxFile) && mockContent) {
-      fs.writeFileSync(`${dir}/__mocks__/${tsxFile}`, mockContent, {
+    if (!mockFileExists(file, f) && mockContent) {
+      fs.writeFileSync(`${currPath}/__mocks__/${currFile}`, mockContent, {
         encoding: 'utf-8',
       })
     }
