@@ -1,4 +1,4 @@
-import { generateMock } from './generateMocks'
+import { generateMock } from '../generateMocks'
 
 describe('generateMocks', () => {
   it('replaces the import statement with only react', () => {

@@ -1,0 +1,120 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`generateMocks components handles direct export defaults correctly 1`] = `
+"import React from 'react'
+export default (props => {
+  return React.createElement(\\"\\", props);
+});"
+`;
+
+exports[`generateMocks components handles export default correctly 1`] = `
+"import React from 'react'
+const SomeComponent = props => {
+  return React.createElement(\\"SomeComponent\\", props);
+};
+
+export default SomeComponent;"
+`;
+
+exports[`generateMocks components handles export wrapped in higher order function 1`] = `
+"import React from 'react'
+const SomeComponent = props => {
+  return React.createElement(\\"SomeComponent\\", props);
+};
+
+export default React.memo(SomeComponent);"
+`;
+
+exports[`generateMocks components handles styled components 1`] = `
+"import React from 'react'
+export const SomeComponent = props => {
+  return React.createElement(\\"SomeComponent\\", props);
+};"
+`;
+
+exports[`generateMocks components mocks class component 1`] = `
+"import React from 'react'
+export const SomeClassComponent = props => {
+  return React.createElement(\\"SomeClassComponent\\", props);
+};"
+`;
+
+exports[`generateMocks components mocks default class component 1`] = `
+"import React from 'react'
+export default (props => {
+  return React.createElement(\\"SomeClassComponent\\", props);
+});"
+`;
+
+exports[`generateMocks components mocks functional components 1`] = `
+"import React from 'react'
+export const SomeComponent = props => {
+  return React.createElement(\\"SomeComponent\\", props);
+};"
+`;
+
+exports[`generateMocks components mocks functional components of different sort 1`] = `
+"import React from 'react'
+export const same = 'the same procedure as every year';
+export const shortComponent = props => React.createElement(\\"shortComponent\\", props);
+export const parans = props => React.createElement(\\"parans\\", props);
+export const braced = props => {
+  return React.createElement(\\"braced\\", props);
+};
+export const someFunction = jest.fn();"
+`;
+
+exports[`generateMocks components mocks functions 1`] = `
+"import React from 'react'
+export const fn1 = jest.fn();
+export function FnComponent(props) {
+  return React.createElement(\\"FnComponent\\", props);
+}"
+`;
+
+exports[`generateMocks components mocks non component functions with jest.fn 1`] = `
+"import React from 'react'
+export const function1 = jest.fn();
+export const function2 = jest.fn();
+export const function3 = jest.fn();"
+`;
+
+exports[`generateMocks components mocks referenced default class component 1`] = `
+"import React from 'react'
+class SomeClassComponent extends React.PureComponent {
+  render() {
+    return React.createElement(\\"\\");
+  }
+
+}
+
+export default SomeClassComponent;"
+`;
+
+exports[`generateMocks components removes comments 1`] = `
+"import React from 'react'
+export const function2 = jest.fn();"
+`;
+
+exports[`generateMocks components removes non exported components 1`] = `
+"import React from 'react'
+export const externalComponent = props => React.createElement(\\"externalComponent\\", props);"
+`;
+
+exports[`generateMocks components removes typescript 1`] = `
+"import React from 'react'
+export const parans = props => React.createElement(\\"parans\\", props);"
+`;
+
+exports[`generateMocks handles ExportNamedDeclarations 1`] = `
+"import React from 'react'
+const A = props => {
+  return React.createElement(\\"A\\", props);
+};
+
+const B = props => {
+  return React.createElement(\\"B\\", props);
+};
+
+export { A, B };"
+`;
