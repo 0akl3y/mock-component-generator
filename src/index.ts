@@ -21,7 +21,7 @@ class MockGenerator extends Command {
   async run() {
     const { args, flags } = this.parse(MockGenerator)
     this.log(`Generating mock files`)
-    generateMocksInDir(args.firstArg, flags)
+    generateMocksInDir(args.glob, flags)
   }
 }
 
