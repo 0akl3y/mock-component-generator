@@ -44,7 +44,7 @@ export async function generateMocksInDir(
     const mockContent = generateMock(content, options)
 
     //It should not overwrite existing mocks
-    if (!mockFileExists(dir, tsxFile)) {
+    if (!mockFileExists(dir, tsxFile) && mockContent) {
       fs.writeFileSync(`${dir}/__mocks__/${tsxFile}`, mockContent, {
         encoding: 'utf-8',
       })

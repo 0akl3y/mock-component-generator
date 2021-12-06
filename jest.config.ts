@@ -5,17 +5,17 @@
 
 export default {
   clearMocks: true,
-  testEnvironment: "node",
+  testEnvironment: 'node',
   verbose: true,
-  testMatch: ["**/__tests__/**/*.[jt]s?(x)", "**/?(*.)+(spec|test).[jt]s?(x)"],
-  moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json"],
+  testMatch: ['**/__tests__/**/*.[jt]s?(x)', '**/?(*.)+(spec|test).[jt]s?(x)'],
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
 
-  modulePathIgnorePatterns: ["__mockFilesystem__"],
+  modulePathIgnorePatterns: ['__mockFilesystem__'],
   moduleNameMapper: {
-    "@/(.*)$": "<rootDir>/src/$1",
+    '@/(.*)$': '<rootDir>/src/$1',
   },
   transform: {
-    "^.+\\.(ts|tsx)$": "ts-jest",
+    '^.+\\.(ts|tsx)$': 'ts-jest',
   },
-  cacheDirectory: ".jest/cache",
-};
+  cacheDirectory: '.jest/cache',
+}
