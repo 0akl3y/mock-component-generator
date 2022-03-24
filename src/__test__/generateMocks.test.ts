@@ -1,17 +1,6 @@
 import { generateMock } from '../generateMocks'
 
 describe('generateMocks', () => {
-  it('replaces the import statement with only react', () => {
-    const input = `
-    import Stuff from '@/some-stuff'
-    import Blah from '@/some-blah'
-    import { Blub } from '@/some-blub'
-
-    let someOtherCode
-    `
-    expect(generateMock(input)).toEqual("import React from 'react'\n")
-  })
-
   describe('components', () => {
     it('mocks functional components of different sort', () => {
       const input = `
@@ -40,7 +29,7 @@ describe('generateMocks', () => {
       const input = `
       import React from 'react'
       import {Row} from 'superuiguide'
-      const someStuff
+      let someStuff
         
       const curly = (input) => ('braces')
       const someOtherFunction = (input) => {return input + 1}
@@ -136,7 +125,7 @@ describe('generateMocks', () => {
       const input = `
       import React from 'react'
       import {Row} from 'superuiguide'
-      const someStuff
+      let someStuff
         
       const curly = (input) => ('braces')
       const someOtherFunction = (input) => {return input + 1}
@@ -154,7 +143,7 @@ describe('generateMocks', () => {
       const input = `
       import React from 'react'
       import {Row} from 'superuiguide'
-      const someStuff
+      let someStuff
                   
       export default (props) => {
         return <Row />
@@ -183,7 +172,7 @@ describe('generateMocks', () => {
       import React from 'react'
       
       import {Row} from 'superuiguide'
-      const someStuff
+      let someStuff
 
       const Thing = styled.View\`
         background-color: black;      
@@ -203,7 +192,7 @@ describe('generateMocks', () => {
     import React from 'react'
     
     import {Row} from 'superuiguide'
-    const someStuff
+    let someStuff
 
     const Thing = styled.View\`
       background-color: black;      

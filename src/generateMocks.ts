@@ -17,6 +17,8 @@ export const generateMock = (code: string, options?: MockGeneratorOptions) => {
   const transformedCode = options?.keepTSTypes
     ? code
     : transform(code, {
+        // Set a placeholder filename to avoid babel core error
+        filename: '_temp.js',
         plugins: [['@babel/plugin-transform-typescript', { isTSX: true }]],
         parserOpts: {
           sourceType: 'module',
@@ -95,7 +97,7 @@ export const generateMock = (code: string, options?: MockGeneratorOptions) => {
     const callee = (expression as t.CallExpression)
       ?.callee as t.MemberExpression
 
-    if (((callee as unknown) as t.Identifier)?.name === 'React.createElement') {
+    if ((callee as unknown as t.Identifier)?.name === 'React.createElement') {
       return true
     }
 
@@ -210,10 +212,12 @@ export const generateMock = (code: string, options?: MockGeneratorOptions) => {
       parent = path.findParent((path) => path.isFunction()) as typeof parent
       if (parent?.isFunction()) {
         const params = parent.node?.params as any[]
-        const functionName = (path.findParent(
-          (path: NodePath) =>
-            path.isVariableDeclarator() || path.isFunctionDeclaration()
-        )?.node as any)?.id.name
+        const functionName = (
+          path.findParent(
+            (path: NodePath) =>
+              path.isVariableDeclarator() || path.isFunctionDeclaration()
+          )?.node as any
+        )?.id.name
         const mockedElement = t.callExpression(
           t.memberExpression(
             t.identifier('React'),
